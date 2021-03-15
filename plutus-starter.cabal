@@ -1,0 +1,33 @@
+cabal-version:      2.4
+name:               plutus-starter
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+license: Apache-2.0
+license-files: LICENSE
+author:             Your name
+maintainer:         Your email
+
+-- A copyright notice.
+-- copyright:
+-- category:
+-- extra-source-files: CHANGELOG.md
+
+library
+    exported-modules:
+      MyModule
+    build-depends:
+      base ^>=4.14.1.0,
+      plutus-contract,
+      plutus-tx-plugin,
+      plutus-tx
+    hs-source-dirs: src
+    default-language: Haskell2010
