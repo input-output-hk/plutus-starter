@@ -22,7 +22,7 @@ maintainer:         Your email
 -- extra-source-files: CHANGELOG.md
 
 library
-    exported-modules:
+    exposed-modules:
       MyModule
     build-depends:
       base ^>=4.14.1.0,
