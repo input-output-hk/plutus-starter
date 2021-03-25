@@ -3,9 +3,10 @@
     "image": "plutus-devcontainer:latest",
     
     "mounts": [
-        // FIXME: this doesn't work, it still uses "my" home dir in the container, despite
-        // there being no mention of my username and 'whoami' saying 'root'
-        "source=${localEnv:HOME}/.cabal,target=/root/.cabal,type=bin,consistency=cached",
+        // This shares cabal's remote repository state with the host. We don't mount the whole of '.cabal', because
+        // 1. '.cabal/config' contains absolute paths that will only make sense on the host, and
+        // 2. '.cabal/store' is not necessarily portable to different version of cabal etc.
+        "source=${localEnv:HOME}/.cabal/packages,target=/root/.cabal/packages,type=bind,consistency=cached",
     ],
 
     "settings": {
