@@ -12,7 +12,6 @@ For now, the only supported tooling setup is to use the provided VSCode devconta
   - You do *not* need to install the Haskell extension
 - Get the docker image (for now, we need to build this with Nix)
   - Clone https://github.com/input-output-hk/plutus 
-  - Until https://github.com/input-output-hk/plutus/pull/2910 has been merged, you will need to check out the `devcontainer` branch rather than master
   - Set up your machine to build things with Nix, following the Plutus README (make sure to set up the binary cache!)
   - Build and load the docker container: `docker load < $(nix-build default.nix -A devcontainer)`
 - Clone this repository and open it in VSCode
