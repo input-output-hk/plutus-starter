@@ -22,14 +22,13 @@ source-repository-package
     plutus-tx 
     plutus-tx-plugin 
     prettyprinter-configurable
-  tag: 41c04ab2d705979b5a69c9c5b1d67552a23d81c4
+  tag: 026fe789bcb13e8df704ca123ff39a8b34d3b30a
 
 -- The following sections are copied from the 'plutus' repository cabal.project at the revision
 -- given above. 
 -- This is necessary because the  'plutus' libraries depend on a number of other libraries which are 
 -- not on Hackage, and so need to be pulled in as `source-repository-package`s themselves. Make sure to
 -- re-update this section from the template when you do an upgrade.
-
 package eventful-sql-common
   ghc-options: -XDerivingStrategies -XStandaloneDeriving -XUndecidableInstances -XDataKinds -XFlexibleInstances
 
