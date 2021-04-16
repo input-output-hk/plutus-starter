@@ -26,7 +26,7 @@ library
       MyModule
       Plutus.Contracts.Game
     build-depends:
-      base ^>=4.14.1.0,
+      base >= 4.9 && < 5,
       aeson,
       bytestring,
       playground-common,
@@ -36,6 +36,9 @@ library
       plutus-ledger
     hs-source-dirs: src examples/src
     default-language: Haskell2010
+    ghc-options:
+            -- See Plutus Tx readme
+            -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
 
 test-suite plutus-example-projects-test
   type: exitcode-stdio-1.0
@@ -60,3 +63,19 @@ test-suite plutus-example-projects-test
     tasty -any,
     tasty-hunit -any,
     tasty-hedgehog >=0.2.0.0
+
+executable plutus-starter-pab
+  main-is: Main.hs
+  hs-source-dirs: pab
+  ghc-options:
+    -threaded
+  build-depends:
+    base >= 4.9 && < 5,
+    plutus-contract -any,
+    plutus-pab -any,
+    plutus-starter -any,
+    aeson -any,
+    freer-simple -any,
+    prettyprinter -any,
+    freer-extras -any,
+    plutus-ledger -any

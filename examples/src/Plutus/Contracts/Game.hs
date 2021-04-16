@@ -19,7 +19,7 @@
 {-# LANGUAGE TypeOperators              #-}
 {-# LANGUAGE TypeSynonymInstances       #-}
 {-# LANGUAGE ViewPatterns               #-}
-{-# OPTIONS_GHC -fno-ignore-interface-pragmas #-}
+
 -- | A guessing game
 module Plutus.Contracts.Game
     ( lock
