@@ -4,21 +4,50 @@ This project gives a simple starter project for using the Plutus Platform.
 
 ## Setting up
 
-For now, the only supported tooling setup is to use the provided VSCode devcontainer to get an environment with the correct tools set up.
+### VSCode devcontainer
+
+Use the provided VSCode devcontainer to get an environment with the correct tools set up.
 
 - Install Docker
 - Install VSCode
   - Install the [Remote Development extension pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
   - You do *not* need to install the Haskell extension
 - Get the docker image (for now, we need to build this with Nix)
-  - Clone https://github.com/input-output-hk/plutus 
-  - Set up your machine to build things with Nix, following the Plutus README (make sure to set up the binary cache!)
+  - Clone https://github.com/input-output-hk/plutus
+  - Set up your machine to build things with Nix, following the [Plutus README](https://github.com/input-output-hk/plutus/blob/master/README.adoc) (make sure to set up the binary cache!)
   - Build and load the docker container: `docker load < $(nix-build default.nix -A devcontainer)`
 - Clone this repository and open it in VSCode
   - It will ask if you want to open it in the container, say yes.
   - `cabal build` from the terminal should work
   - Opening a Haskell file should give you IDE features (it takes a little while to set up the first time)
 
+### Cabal+Nix build
+
+Alternatively, use the Cabal+Nix build if you want to develop with incremental builds, but also have it automatically download all dependencies.
+
+Set up your machine to build things with `Nix`, following the [Plutus README](https://github.com/input-output-hk/plutus/blob/master/README.adoc) (make sure to set up the binary cache!).
+
+To enter a development environment, simply open a terminal on the project's root and use `nix-shell` to get a bash shell:
+
+```
+$ nix-shell
+```
+
+Expect it to build for ~30 minutes.
+
+Otherwise, you can use [direnv](https://github.com/direnv/direnv) which allows you to use your preferred shell. Once installed, just run:
+
+```
+$ echo "use nix" > .envrc # Or manually add "use nix" in .envrc if you already have one
+$ direnv allow
+```
+
+and you'll have a working development environment for now and the future whenever you enter this directory.
+
+The command `cabal build` from the terminal should work.
+
+Also included in the environment is a working [Haskell Language Server](https://github.com/haskell/haskell-language-server) you can integrate with your editor.
+See [here](https://github.com/haskell/haskell-language-server#configuring-your-editor) for instructions.
 
 ## The Plutus Application Backend (PAB) example
 
@@ -142,7 +171,7 @@ didn't validate.
 As an exercise, you can now spin up another instance for Wallet 2 and make a correct guess, and
 confirm that the transaction validates and the Ada is transferred into the right wallet.
 
-Note that you can verify the balances by looking at the log of `plutus-starter-pab` 
+Note that you can verify the balances by looking at the log of `plutus-starter-pab`
 when exiting it by pressing return.
 
 Finally, also node that the PAB also exposes a websocket, which you can read about in

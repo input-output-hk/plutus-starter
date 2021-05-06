@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -ue
+# This script is a drop-in cabal replacement which underneath just calls cabal
+# (or rather, $CABAL_EXECUTABLE to prevent calling this script recursively), but
+# it removes all `source-repository-package` sections from the cabal.project
+# file (the one passed with $CABAL_PROJECT_FILE), so that cabal uses the
+# dependencies from Nix instead of cloning and building them on its own.
+
+# Removes all source-repository-package sections from the cabal.project file
+# and writes the result to file descriptor 3
+exec 3< <(awk '
+  # Matches all section starts
+  /^[^ ]/ {
+    # Remember the section name (they can span multiple lines)
+    section = $0
+  }
+
+  # Matches every line
+  // {
+    # Only print the line if it is not in the section we want to omit
+    if (section != "source-repository-package")
+      print $0
+  }
+' "$CABAL_PROJECT_FILE")
+
+# Calls cabal but exposes different the modified contents for cabal.project
+exec bwrap \
+  --dev-bind / / \
+  --ro-bind-data 3 "$CABAL_PROJECT_FILE" \
+  "$CABAL_EXECUTABLE" "$@"
+
