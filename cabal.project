@@ -1,4 +1,4 @@
-index-state: 2021-02-24T00:00:00Z
+index-state: 2021-04-13T00:00:00Z
 
 packages: ./.
 
@@ -9,6 +9,7 @@ write-ghc-environment-files: never
 tests: true
 benchmarks: true
 
+-- Plutus revision from 2021/06/04
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/plutus.git
@@ -25,15 +26,18 @@ source-repository-package
     plutus-use-cases
     prettyprinter-configurable
     quickcheck-dynamic
-  tag: 97437286b8df2bcafa665785a724eec0d2dcff7f
+    word-array
+  tag: 514f059a7aabc4b03ca80343d29cf0736f9ea498
 
 -- The following sections are copied from the 'plutus' repository cabal.project at the revision
 -- given above.
 -- This is necessary because the  'plutus' libraries depend on a number of other libraries which are
 -- not on Hackage, and so need to be pulled in as `source-repository-package`s themselves. Make sure to
 -- re-update this section from the template when you do an upgrade.
+
+-- This is also needed so evenful-sql-common will build with a newer version of persistent.
 package eventful-sql-common
-  ghc-options: -XDerivingStrategies -XStandaloneDeriving -XUndecidableInstances -XDataKinds -XFlexibleInstances
+  ghc-options: -XDerivingStrategies -XStandaloneDeriving -XUndecidableInstances -XDataKinds -XFlexibleInstances -XMultiParamTypeClasses
 
 allow-newer:
            -- Has a commit to allow newer aeson, not on Hackage yet
@@ -53,7 +57,11 @@ constraints:
   -- breaks eventful even more than it already was
   , persistent-template < 2.12
 
-extra-packages: ieee, filemanip
+-- Drops an instance breaking our code. Should be released to Hackage eventually.
+source-repository-package
+  type: git
+  location: https://github.com/Quid2/flat.git
+  tag: 95e5d7488451e43062ca84d5376b3adcc465f1cd
 
 -- Needs some patches, but upstream seems to be fairly dead (no activity in > 1 year)
 source-repository-package

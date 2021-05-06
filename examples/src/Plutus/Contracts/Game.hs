@@ -40,7 +40,7 @@ module Plutus.Contracts.Game
 import           Control.Monad                  (void)
 import           Data.Aeson                     (FromJSON, ToJSON)
 import           GHC.Generics                   (Generic)
-import           Ledger                         (Address, Validator, ScriptContext, Value, Datum(Datum), TxOutTx)
+import           Ledger                         (Address, Datum(Datum), ScriptContext, TxOutTx, Validator, Value)
 import qualified Ledger
 import qualified Ledger.Ada                     as Ada
 import           Ledger.AddressMap              (UtxoMap)
@@ -56,7 +56,6 @@ import qualified Data.Map                       as Map
 import           Schema                         (ToArgument, ToSchema)
 import           Wallet.Emulator                (Wallet (..))
 
-
 import qualified Data.ByteString.Char8          as C
 import qualified Prelude
 import           Data.Maybe                     (catMaybes)
@@ -65,13 +64,13 @@ import qualified Control.Monad.Freer.Extras.Log as Extras
 
 newtype HashedString = HashedString ByteString
   deriving newtype PlutusTx.IsData
-  deriving Show
+  deriving Prelude.Show
 
 PlutusTx.makeLift ''HashedString
 
 newtype ClearString = ClearString ByteString
   deriving newtype PlutusTx.IsData
-  deriving Show
+  deriving Prelude.Show
 
 PlutusTx.makeLift ''ClearString
 
@@ -106,12 +105,12 @@ gameInstance = Scripts.validator @Game
 
 -- create a data script for the guessing game by hashing the string
 -- and lifting the hash to its on-chain representation
-hashString :: String -> HashedString
+hashString :: Prelude.String -> HashedString
 hashString = HashedString . sha2_256 . C.pack
 
 -- create a redeemer script for the guessing game by lifting the
 -- string to its on-chain representation
-clearString :: String -> ClearString
+clearString :: Prelude.String -> ClearString
 clearString = ClearString . C.pack
 
 -- | The address of the game (the hash of its validator script)
@@ -120,7 +119,7 @@ gameAddress = Ledger.scriptAddress gameValidator
 
 -- | Parameters for the "lock" endpoint
 data LockParams = LockParams
-    { secretWord :: String
+    { secretWord :: Prelude.String
     , amount     :: Value
     }
     deriving stock (Prelude.Eq, Prelude.Show, Generic)
@@ -128,7 +127,7 @@ data LockParams = LockParams
 
 -- | Parameters for the "guess" endpoint
 newtype GuessParams = GuessParams
-    { guessWord :: String
+    { guessWord :: Prelude.String
     }
     deriving stock (Prelude.Eq, Prelude.Show, Generic)
     deriving anyclass (FromJSON, ToJSON, ToSchema, ToArgument)
@@ -139,19 +138,19 @@ game = do
 
 lock :: (AsContractError e) => Contract () GameSchema e ()
 lock = do
-    logInfo @String "Waiting for lock endpoint..."
+    logInfo @Prelude.String "Waiting for lock endpoint..."
     LockParams secret amt <- endpoint @"lock" @LockParams
-    logInfo @String $ "Pay " <> show amt <> " to the script"
+    logInfo @Prelude.String $ "Pay " <> Prelude.show amt <> " to the script"
     let tx         = Constraints.mustPayToTheScript (hashString secret) amt
     void (submitTxConstraints gameInstance tx)
 
 guess :: (AsContractError e) => Contract () GameSchema e ()
 guess = do
     -- Wait for script to have a UTxO of a least 1 lovelace
-    logInfo @String "Waiting for script to have a UTxO of at least 1 lovelace"
+    logInfo @Prelude.String "Waiting for script to have a UTxO of at least 1 lovelace"
     utxos <- fundsAtAddressGeq gameAddress (Ada.lovelaceValueOf 1)
     -- Wait for a call on the guess endpoint
-    logInfo @String "Waiting for guess endpoint..."
+    logInfo @Prelude.String "Waiting for guess endpoint..."
     GuessParams theGuess <- endpoint @"guess" @GuessParams
 
     let redeemer = clearString theGuess
@@ -167,7 +166,7 @@ guess = do
     -- This is only for test purposes to have a possible failing transaction.
     -- In a real use-case, we would not submit the transaction if the guess is
     -- wrong.
-    logInfo @String "Submitting transaction to guess the secret word"
+    logInfo @Prelude.String "Submitting transaction to guess the secret word"
     void (submitTxConstraintsSpending gameInstance utxos tx)
 
 -- | Find the secret word in the Datum of the UTxOs
@@ -182,14 +181,14 @@ secretWordValue o = do
   Datum d <- Map.lookup dh $ Ledger.txData $ Ledger.txOutTxTx o
   PlutusTx.fromData d
 
-lockTrace :: Wallet -> String -> EmulatorTrace ()
+lockTrace :: Wallet -> Prelude.String -> EmulatorTrace ()
 lockTrace wallet secretWord = do
     hdl <- Trace.activateContractWallet wallet (lock @ContractError)
     void $ Trace.waitNSlots 1
     Trace.callEndpoint @"lock" hdl (LockParams secretWord (Ada.adaValueOf 10))
     void $ Trace.waitNSlots 1
 
-guessTrace :: Wallet -> String -> EmulatorTrace ()
+guessTrace :: Wallet -> Prelude.String -> EmulatorTrace ()
 guessTrace wallet guessWord = do
     hdl <- Trace.activateContractWallet wallet (guess @ContractError)
     void $ Trace.waitNSlots 1
