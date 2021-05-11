@@ -27,15 +27,13 @@ Alternatively, use the Cabal+Nix build if you want to develop with incremental b
 
 Set up your machine to build things with `Nix`, following the [Plutus README](https://github.com/input-output-hk/plutus/blob/master/README.adoc) (make sure to set up the binary cache!).
 
-To enter a development environment, simply open a terminal on the project's root and use `nix-shell` to get a bash shell:
+To enter a development environment, simply open a terminal on the project's root and use `nix-shell` to get a bash shell (expect it to build for ~30 minutes):
 
 ```
 $ nix-shell
 ```
 
-Expect it to build for ~30 minutes.
-
-Otherwise, you can use [direnv](https://github.com/direnv/direnv) which allows you to use your preferred shell. Once installed, just run:
+Otherwise, you can use [direnv](https://github.com/direnv/direnv) which allows you to use your preferred shell. Once `direnv` is installed, run:
 
 ```
 $ echo "use nix" > .envrc # Or manually add "use nix" in .envrc if you already have one
@@ -44,10 +42,23 @@ $ direnv allow
 
 and you'll have a working development environment for now and the future whenever you enter this directory.
 
-The command `cabal build` from the terminal should work.
+Now, the command `cabal build` from the terminal should work.
 
 Also included in the environment is a working [Haskell Language Server](https://github.com/haskell/haskell-language-server) you can integrate with your editor.
 See [here](https://github.com/haskell/haskell-language-server#configuring-your-editor) for instructions.
+
+### Stack
+
+Another way would be to build this project with [Haskell Stack](https://haskellstack.org/).
+
+```
+stack build
+```
+
+Our `Haskell Stack` build uses `Nix` in order to install the non-Haskell dependencies needed by the project.
+If you don't have `Nix` installed, then you may need to install `gmp` and `zlib` development libraries for the build to succeed.
+
+Expect it to build for ~1 hour.
 
 ## The Plutus Application Backend (PAB) example
 
@@ -63,12 +74,14 @@ have `jq` installed.
 
 ```
 cabal build plutus-starter-pab
+# or `stack build` if using Haskell Stack
 ```
 
 2. Run the PAB binary:
 
 ```
 cabal exec -- plutus-starter-pab
+# or `stack run` if using Haskell Stack
 ````
 
 This will then start up the server on port 8080. The devcontainer process will then automatically expose this port so that you can connect to it from any terminal (it doesn't have to be a terminal running in the devcontainer).

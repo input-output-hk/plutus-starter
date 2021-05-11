@@ -17,6 +17,8 @@ let
     haskellNix.nixpkgsArgs;
 
 in pkgs.haskell-nix.project {
+  projectFileName = "cabal.project";
+
   # 'cleanGit' cleans a source directory based on the files known by git
   src = pkgs.haskell-nix.haskellLib.cleanGit {
     name = "plutus-starter";

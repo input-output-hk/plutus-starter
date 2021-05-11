@@ -1,0 +1,96 @@
+resolver: lts-17.11
+
+packages:
+  - '.'
+
+extra-deps:
+  - git: https://github.com/input-output-hk/plutus.git
+    commit: 03a95411238225db1d10288fbd3b405f5f53c78b
+    subdirs:
+      - freer-extras
+      - playground-common
+      - plutus-core
+      - plutus-contract
+      - plutus-ledger
+      - plutus-ledger-api
+      - plutus-tx
+      - plutus-tx-plugin
+      - plutus-pab
+      - plutus-use-cases
+      - prettyprinter-configurable
+      - quickcheck-dynamic
+  - git: https://github.com/shmish111/servant-purescript.git
+    commit: a76104490499aa72d40c2790d10e9383e0dbde63
+  - git: https://github.com/input-output-hk/cardano-crypto.git
+    commit: f73079303f663e028288f9f4a9e08bcca39a923e
+  - git: https://github.com/input-output-hk/cardano-prelude
+    commit: ee4e7b547a991876e6b05ba542f4e62909f4a571
+    subdirs:
+      - cardano-prelude
+      - cardano-prelude-test
+  - git: https://github.com/input-output-hk/ouroboros-network
+    commit: 6cb9052bde39472a0555d19ade8a42da63d3e904
+    subdirs:
+      - typed-protocols
+      - typed-protocols-examples
+      - ouroboros-network
+      - ouroboros-network-testing
+      - ouroboros-network-framework
+      - io-sim
+      - io-sim-classes
+      - network-mux
+      - Win32-network
+  - git: https://github.com/input-output-hk/cardano-base
+    commit: 4251c0bb6e4f443f00231d28f5f70d42876da055
+    subdirs:
+      - binary
+      - binary/test
+      - slotting
+      - cardano-crypto-class
+      - cardano-crypto-praos
+  - git: https://github.com/input-output-hk/iohk-monitoring-framework
+    commit: a89c38ed5825ba17ca79fddb85651007753d699d
+    subdirs:
+      - iohk-monitoring
+      - tracer-transformers
+      - contra-tracer
+      - plugins/backend-ekg
+  - git: https://github.com/shmish111/purescript-bridge.git
+    commit: 6a92d7853ea514be8b70bab5e72077bf5a510596
+  - Stream-0.4.7.2
+  - async-timer-0.2.0.0
+  - base16-bytestring-1.0.1.0
+  - canonical-json-0.6.0.0
+  - composition-prelude-3.0.0.2
+  - dependent-map-0.4.0.0
+  - dependent-sum-0.6.2.0
+  - dependent-sum-template-0.1.0.3
+  - dns-3.0.4
+  - eventful-memory-0.2.0
+  - eventful-sql-common-0.2.0
+  - eventful-sqlite-0.2.0
+  - lazy-search-0.1.2.1
+  - monoidal-containers-0.6.0.1
+  - network-3.1.2.1
+  - nothunks-0.1.2
+  - recursion-schemes-5.1.3
+  - servant-subscriber-0.7.0.0
+  - servant-websockets-2.0.0
+  - size-based-0.1.2.0
+  - statistics-linreg-0.3
+  - time-out-0.2
+  - witherable-0.4.1
+  - constraints-extras-0.3.1.0
+  - indexed-traversable-instances-0.1
+  - lazysmallcheck-0.6
+  - row-types-0.4.0.0
+  - time-interval-0.1.1
+
+allow-newer: true
+
+ghc-options:
+  eventful-sql-common: -XDerivingStrategies -XStandaloneDeriving -XUndecidableInstances -XDataKinds -XFlexibleInstances -XMultiParamTypeClasses
+
+nix:
+  enable: true
+  packages: [gmp, zlib, cacert]

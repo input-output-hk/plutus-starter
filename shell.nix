@@ -23,6 +23,8 @@ in
   project.shellFor {
     packages = ps: lib.attrValues (selectProjectPackages ps);
 
+    buildInputs = with pkgs; [ jq ];
+
     exactDeps = true;
 
     tools = {
