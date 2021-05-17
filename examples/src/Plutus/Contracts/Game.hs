@@ -6,8 +6,6 @@
 {-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE KindSignatures             #-}
-{-# LANGUAGE MonoLocalBinds             #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE NoImplicitPrelude          #-}
 {-# LANGUAGE PartialTypeSignatures      #-}
@@ -17,7 +15,6 @@
 {-# LANGUAGE TypeApplications           #-}
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
-{-# LANGUAGE TypeSynonymInstances       #-}
 {-# LANGUAGE ViewPatterns               #-}
 
 -- | A guessing game
@@ -37,7 +34,6 @@ module Plutus.Contracts.Game
     , validateGuess
     -- * Traces
     , guessTrace
-    , guessWrongTrace
     , lockTrace
     ) where
 
@@ -53,6 +49,7 @@ import           Plutus.Trace.Emulator  (EmulatorTrace)
 import qualified Plutus.Trace.Emulator  as Trace
 import qualified PlutusTx
 import           PlutusTx.Prelude
+import qualified Data.Map as Map
 import           Schema                 (ToArgument, ToSchema)
 import           Wallet.Emulator        (Wallet (..))
 
@@ -61,6 +58,8 @@ import qualified Ledger.Ada             as Ada
 
 import qualified Data.ByteString.Char8  as C
 import qualified Prelude
+import Ledger.AddressMap (UtxoMap)
+import Data.Void (Void)
 
 newtype HashedString = HashedString ByteString deriving newtype PlutusTx.IsData
 
@@ -76,6 +75,7 @@ type GameSchema =
         .\/ Endpoint "guess" GuessParams
 
 -- | The validation function (DataValue -> RedeemerValue -> ValidatorCtx -> Bool)
+{-# INLINABLE validateGuess #-}
 validateGuess :: HashedString -> ClearString -> ValidatorCtx -> Bool
 validateGuess (HashedString actual) (ClearString guess') _ = actual == sha2_256 guess'
 
@@ -131,32 +131,26 @@ lock = do
 
 guess :: AsContractError e => Contract () GameSchema e ()
 guess = do
+    unspentOutputs <- fundsAtAddressGeq gameAddress (Ada.lovelaceValueOf 1)
     GuessParams theGuess <- endpoint @"guess" @GuessParams
-    unspentOutputs <- utxoAt gameAddress
     let redeemer = clearString theGuess
         tx       = collectFromScript unspentOutputs redeemer
     void (submitTxConstraintsSpending gameInstance unspentOutputs tx)
 
-game :: AsContractError e => Contract () GameSchema e ()
-game = lock `select` guess
+game :: (AsContractError e, ToJSON e) => Contract () GameSchema e ()
+game = do
+  lock `select` guess
 
-lockTrace :: EmulatorTrace ()
-lockTrace = do
-    let w1 = Wallet 1
-    hdl <- Trace.activateContractWallet w1 (game @ContractError)
-    Trace.callEndpoint @"lock" hdl (LockParams "secret" (Ada.lovelaceValueOf 10))
+lockTrace :: Wallet -> String -> EmulatorTrace ()
+lockTrace wallet secretWord = do
+    hdl <- Trace.activateContractWallet wallet (lock @ContractError)
+    void $ Trace.waitNSlots 1
+    Trace.callEndpoint @"lock" hdl (LockParams secretWord (Ada.lovelaceValueOf 10))
     void $ Trace.waitNSlots 1
 
-guessTrace :: EmulatorTrace ()
-guessTrace = do
-    lockTrace
-    let w2 = Wallet 2
-    hdl <- Trace.activateContractWallet w2 (game @ContractError)
-    Trace.callEndpoint @"guess" hdl (GuessParams "secret")
-
-guessWrongTrace :: EmulatorTrace ()
-guessWrongTrace = do
-    lockTrace
-    let w2 = Wallet 2
-    hdl <- Trace.activateContractWallet w2 (game @ContractError)
-    Trace.callEndpoint @"guess" hdl (GuessParams "SECRET")
+guessTrace :: Wallet -> String -> EmulatorTrace ()
+guessTrace wallet guessWord = do
+    hdl <- Trace.activateContractWallet wallet (guess @ContractError)
+    void $ Trace.waitNSlots 1
+    Trace.callEndpoint @"guess" hdl (GuessParams guessWord)
+    void $ Trace.waitNSlots 1
