@@ -52,15 +52,15 @@ tests = testGroup "game"
           lockTrace w1 "secret"
 
     , checkPredicate "guess right (unlock funds)"
-        (walletFundsChange w2 (1 `timesFeeAdjust` 10)
-          .&&. walletFundsChange w1 (1 `timesFeeAdjust` (-10)))
+        (walletFundsChange w2 (Ada.adaValueOf 10)
+          .&&. walletFundsChange w1 (Ada.adaValueOf (-10)))
         $ do
           lockTrace w1 "secret"
           guessTrace w2 "secret"
 
     , checkPredicate "guess wrong"
         (walletFundsChange w2 PlutusTx.zero
-          .&&. walletFundsChange w1 (1 `timesFeeAdjust` (-10)))
+          .&&. walletFundsChange w1 (Ada.adaValueOf (-10)))
         $ do
           lockTrace w1 "secret"
           guessTrace w2 "SECRET"

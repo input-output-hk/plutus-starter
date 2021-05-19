@@ -40,7 +40,7 @@ module Plutus.Contracts.Game
 import           Control.Monad          (void)
 import           Data.Aeson             (FromJSON, ToJSON)
 import           GHC.Generics           (Generic)
-import           Ledger                 (Address, Validator, ValidatorCtx, Value)
+import           Ledger                 (Address, Validator, ScriptContext, Value)
 import qualified Ledger.Constraints     as Constraints
 import qualified Ledger.Typed.Scripts   as Scripts
 import           Plutus.Contract
@@ -74,9 +74,9 @@ type GameSchema =
         .\/ Endpoint "lock" LockParams
         .\/ Endpoint "guess" GuessParams
 
--- | The validation function (DataValue -> RedeemerValue -> ValidatorCtx -> Bool)
+-- | The validation function (DataValue -> RedeemerValue -> ScriptContext -> Bool)
 {-# INLINABLE validateGuess #-}
-validateGuess :: HashedString -> ClearString -> ValidatorCtx -> Bool
+validateGuess :: HashedString -> ClearString -> ScriptContext -> Bool
 validateGuess (HashedString actual) (ClearString guess') _ = actual == sha2_256 guess'
 
 -- | The validator script of the game.
@@ -145,7 +145,7 @@ lockTrace :: Wallet -> String -> EmulatorTrace ()
 lockTrace wallet secretWord = do
     hdl <- Trace.activateContractWallet wallet (lock @ContractError)
     void $ Trace.waitNSlots 1
-    Trace.callEndpoint @"lock" hdl (LockParams secretWord (Ada.lovelaceValueOf 10))
+    Trace.callEndpoint @"lock" hdl (LockParams secretWord (Ada.adaValueOf 10))
     void $ Trace.waitNSlots 1
 
 guessTrace :: Wallet -> String -> EmulatorTrace ()
