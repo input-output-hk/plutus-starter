@@ -34,6 +34,7 @@ source-repository-package
 -- re-update this section from the template when you do an upgrade.
 package eventful-sql-common
   ghc-options: -XDerivingStrategies -XStandaloneDeriving -XUndecidableInstances -XDataKinds -XFlexibleInstances
+               -XMultiParamTypeClasses
 
 allow-newer:
            -- Has a commit to allow newer aeson, not on Hackage yet
