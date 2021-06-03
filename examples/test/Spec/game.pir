@@ -225,8 +225,7 @@
           (termbind
             (strict)
             (vardecl
-              validateGuess
-              (fun (con bytestring) (fun (con bytestring) (fun ScriptContext Bool)))
+              isGoodGuess (fun (con bytestring) (fun (con bytestring) Bool))
             )
             (lam
               ds
@@ -234,11 +233,23 @@
               (lam
                 ds
                 (con bytestring)
-                (lam
-                  ds
-                  ScriptContext
-                  [ [ equalsByteString ds ] [ (builtin sha2_256) ds ] ]
-                )
+                [ [ equalsByteString ds ] [ (builtin sha2_256) ds ] ]
+              )
+            )
+          )
+          (termbind
+            (strict)
+            (vardecl
+              validateGuess
+              (fun (con bytestring) (fun (con bytestring) (fun ScriptContext Bool)))
+            )
+            (lam
+              hs
+              (con bytestring)
+              (lam
+                cs
+                (con bytestring)
+                (lam ds ScriptContext [ [ isGoodGuess hs ] cs ])
               )
             )
           )

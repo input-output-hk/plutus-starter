@@ -30,6 +30,7 @@ library
       aeson,
       bytestring,
       containers,
+      freer-extras,
       playground-common,
       plutus-contract,
       plutus-tx-plugin,

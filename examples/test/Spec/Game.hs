@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds        #-}
 {-# LANGUAGE TemplateHaskell  #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE NumericUnderscores     #-}
 
 module Spec.Game
     ( tests
@@ -14,7 +15,6 @@ import           Plutus.Contracts.Game
 import           Plutus.Trace.Emulator (ContractInstanceTag)
 import qualified Plutus.Trace.Emulator as Trace
 import qualified PlutusTx
-import qualified PlutusTx.Prelude      as PlutusTx
 import           Test.Tasty
 import qualified Test.Tasty.HUnit      as HUnit
 import Prelude hiding (not)
@@ -59,7 +59,7 @@ tests = testGroup "game"
           guessTrace w2 "secret"
 
     , checkPredicate "guess wrong"
-        (walletFundsChange w2 PlutusTx.zero
+        (walletFundsChange w2 (Ada.lovelaceValueOf (-99999990))
           .&&. walletFundsChange w1 (Ada.adaValueOf (-10)))
         $ do
           lockTrace w1 "secret"
