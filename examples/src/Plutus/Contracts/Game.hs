@@ -39,7 +39,6 @@ module Plutus.Contracts.Game
 
 import           Control.Monad                  (void)
 import           Data.Aeson                     (FromJSON, ToJSON)
-import           Data.Monoid                    (Last(Last, getLast))
 import           GHC.Generics                   (Generic)
 import           Ledger                         (Address, Validator, ScriptContext, Value, Datum(Datum), TxOutTx)
 import qualified Ledger
@@ -140,15 +139,19 @@ game = do
 
 lock :: (AsContractError e) => Contract () GameSchema e ()
 lock = do
+    logInfo @String "Waiting for lock endpoint..."
     LockParams secret amt <- endpoint @"lock" @LockParams
+    logInfo @String $ "Pay " <> show amt <> " to the script"
     let tx         = Constraints.mustPayToTheScript (hashString secret) amt
     void (submitTxConstraints gameInstance tx)
 
 guess :: (AsContractError e) => Contract () GameSchema e ()
 guess = do
     -- Wait for script to have a UTxO of a least 1 lovelace
+    logInfo @String "Waiting for script to have a UTxO of at least 1 lovelace"
     utxos <- fundsAtAddressGeq gameAddress (Ada.lovelaceValueOf 1)
     -- Wait for a call on the guess endpoint
+    logInfo @String "Waiting for guess endpoint..."
     GuessParams theGuess <- endpoint @"guess" @GuessParams
 
     let redeemer = clearString theGuess
@@ -161,6 +164,10 @@ guess = do
        then logWarn "Correct secret word! Submitting the transaction"
        else logWarn "Incorrect secret word, but still submiting the transaction"
 
+    -- This is only for test purposes to have a possible failing transaction.
+    -- In a real use-case, we would not submit the transaction if the guess is
+    -- wrong.
+    logInfo @String "Submitting transaction to guess the secret word"
     void (submitTxConstraintsSpending gameInstance utxos tx)
 
 -- | Find the secret word in the Datum of the UTxOs
