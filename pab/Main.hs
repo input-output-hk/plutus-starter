@@ -13,6 +13,7 @@ module Main(main) where
 
 import           Control.Monad                       (void)
 import           Control.Monad.Freer                 (Eff, Member, interpret, type (~>))
+import           Control.Monad.Freer.Extras.Log      (LogMsg)
 import           Control.Monad.Freer.Error           (Error)
 import           Control.Monad.IO.Class              (MonadIO (..))
 import           Data.Aeson                          (FromJSON (..), ToJSON (..), genericToJSON, genericParseJSON
@@ -23,6 +24,7 @@ import           Plutus.Contract                     (BlockchainActions, Contrac
 import           Plutus.PAB.Effects.Contract         (ContractEffect (..))
 import           Plutus.PAB.Effects.Contract.Builtin (Builtin, SomeBuiltin (..), type (.\\))
 import qualified Plutus.PAB.Effects.Contract.Builtin as Builtin
+import           Plutus.PAB.Monitoring.PABLogMsg     (PABMultiAgentMsg)
 import           Plutus.PAB.Simulator                (SimulatorEffectHandlers)
 import qualified Plutus.PAB.Simulator                as Simulator
 import           Plutus.PAB.Types                    (PABError (..))
@@ -44,7 +46,7 @@ main = void $ Simulator.runSimulationWith handlers $ do
 
     -- Pressing enter results in the balances being printed
     void $ liftIO getLine
-    
+
     Simulator.logString @(Builtin StarterContracts) "Balances at the end of the simulation"
     b <- Simulator.currentBalances
     Simulator.logBalances @(Builtin StarterContracts) b
@@ -55,7 +57,7 @@ data StarterContracts =
     GameContract
     deriving (Eq, Ord, Show, Generic)
 
--- NOTE: Because 'StarterContracts' only has one constructor, corresponding to 
+-- NOTE: Because 'StarterContracts' only has one constructor, corresponding to
 -- the demo 'Game' contract, we kindly ask aeson to still encode it as if it had
 -- many; this way we get to see the label of the contract in the API output!
 -- If you simple have more contracts, you can just use the anyclass deriving
@@ -74,6 +76,7 @@ instance Pretty StarterContracts where
 
 handleStarterContract ::
     ( Member (Error PABError) effs
+    , Member (LogMsg (PABMultiAgentMsg (Builtin StarterContracts))) effs
     )
     => ContractEffect (Builtin StarterContracts)
     ~> Eff effs

@@ -29,6 +29,8 @@ library
       base >= 4.9 && < 5,
       aeson,
       bytestring,
+      containers,
+      freer-extras,
       playground-common,
       plutus-contract,
       plutus-tx-plugin,
