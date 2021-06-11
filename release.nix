@@ -1,3 +1,7 @@
+# The content of this file was partially copied from the equivalent file in the plutus repository.
+# It is used by IOHK's Hydra for CI (building the project, running the tests, etc.)
+#
+# Therefore, do not worry too much about the structure.
 let
   packages = import ./.;
 

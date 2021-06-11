@@ -2,14 +2,22 @@
 , haskell-nix
 , gitignore-nix
 , sources
-, plutus
+, compiler-nix-name
 }:
 let
-  # Use the same index-state as plutus
-  index-state = plutus.plutus.haskell.index-state;
-
-  # Use the same GHC version as plutus
-  compiler-nix-name = plutus.plutus.haskell.project.projectModule.compiler-nix-name;
+  # The Hackage index-state from cabal.project
+  index-state =
+    let
+      parseIndexState = rawCabalProject:
+        let
+          indexState = lib.lists.concatLists (
+            lib.lists.filter (l: l != null)
+              (map (l: builtins.match "^index-state: *(.*)" l)
+                (lib.splitString "\n" rawCabalProject)));
+        in
+        lib.lists.head (indexState ++ [ null ]);
+    in
+    parseIndexState (builtins.readFile ../../../cabal.project);
 
   # The haskell project created by haskell-nix.cabalProject'
   project = import ./haskell.nix {
@@ -21,13 +29,7 @@ let
 
   # Just the packages in the project
   projectPackages = haskell-nix.haskellLib.selectProjectPackages packages;
-
-  extraPackages = import ./extra.nix {
-    inherit lib haskell-nix sources;
-    inherit index-state compiler-nix-name;
-  };
 in
 rec {
   inherit project projectPackages packages;
-  inherit extraPackages;
 }

@@ -4,12 +4,13 @@
 , haskell-nix
 }:
 let
-  inherit (pkgs) stdenv;
-
   gitignore-nix = pkgs.callPackage plutus."gitignore.nix" { };
 
+  compiler-nix-name = plutus.plutus.haskell.compiler-nix-name;
+
   haskell = pkgs.callPackage ./haskell {
-    inherit gitignore-nix sources plutus haskell-nix;
+    inherit gitignore-nix sources haskell-nix;
+    inherit compiler-nix-name; # Use the same GHC version as plutus
   };
 
   hlint = plutus.plutus.hlint;
@@ -20,14 +21,8 @@ let
 
   haskell-language-server = plutus.plutus.haskell-language-server;
 
-  #
-  # additional haskell packages from ./nix/pkgs/haskell/extra.nix
-  #
-  exeFromExtras = x: haskell.extraPackages."${x}".components.exes."${x}";
-  cardano-repo-tool = exeFromExtras "cardano-repo-tool";
-
+  cardano-repo-tool = plutus.plutus.cardano-repo-tool;
 in
 {
   inherit haskell hlint cabal-install stylish-haskell haskell-language-server cardano-repo-tool;
 }
-

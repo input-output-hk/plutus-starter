@@ -1,26 +1,14 @@
 {
-    "cardano-repo-tool": {
-        "branch": "master",
-        "description": "A tool for handling the update of Cardano related git repos",
-        "homepage": "",
-        "owner": "input-output-hk",
-        "repo": "cardano-repo-tool",
-        "rev": "71b1333552989093a89e6b04c5397f0b7bb9d0d0",
-        "sha256": "0fxk26dhi9y00sil9kkhf7yqsp3ydy4xi64rnws77881rlxhyqhc",
-        "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-repo-tool/archive/71b1333552989093a89e6b04c5397f0b7bb9d0d0.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "plutus": {
         "branch": "master",
         "description": "The Plutus language implementation and tools",
         "homepage": "",
         "owner": "input-output-hk",
         "repo": "plutus",
-        "rev": "a9c1d984ae77aeac3d88676988e320d23e7b1533",
-        "sha256": "0l5yhgbj6jvnip67h3xz6jz1i4lqyb6cv0afhr07as961ww2cixc",
+        "rev": "5e20b2df3ac55b55b9d70eb7271b295ac797ed5e",
+        "sha256": "02gsyxrkm79dh1diqgh89gdxm3f4vpk8f9k6ckhnj7kjmpyi5r5s",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/plutus/archive/a9c1d984ae77aeac3d88676988e320d23e7b1533.tar.gz",
+        "url": "https://github.com/input-output-hk/plutus/archive/5e20b2df3ac55b55b9d70eb7271b295ac797ed5e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
