@@ -1,0 +1,14 @@
+{
+    "plutus": {
+        "branch": "master",
+        "description": "The Plutus language implementation and tools",
+        "homepage": "",
+        "owner": "input-output-hk",
+        "repo": "plutus",
+        "rev": "5e20b2df3ac55b55b9d70eb7271b295ac797ed5e",
+        "sha256": "02gsyxrkm79dh1diqgh89gdxm3f4vpk8f9k6ckhnj7kjmpyi5r5s",
+        "type": "tarball",
+        "url": "https://github.com/input-output-hk/plutus/archive/5e20b2df3ac55b55b9d70eb7271b295ac797ed5e.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}
