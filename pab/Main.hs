@@ -20,7 +20,7 @@ import           Data.Aeson                          (FromJSON (..), ToJSON (..)
                                                      , defaultOptions, Options(..))
 import           Data.Text.Prettyprint.Doc           (Pretty (..), viaShow)
 import           GHC.Generics                        (Generic)
-import           Plutus.Contract                     (BlockchainActions, ContractError)
+import           Plutus.Contract                     (ContractError)
 import           Plutus.PAB.Effects.Contract         (ContractEffect (..))
 import           Plutus.PAB.Effects.Contract.Builtin (Builtin, SomeBuiltin (..), type (.\\))
 import qualified Plutus.PAB.Effects.Contract.Builtin as Builtin
@@ -82,7 +82,7 @@ handleStarterContract ::
     ~> Eff effs
 handleStarterContract = Builtin.handleBuiltin getSchema getContract where
     getSchema = \case
-        GameContract -> Builtin.endpointsToSchemas @(Game.GameSchema .\\ BlockchainActions)
+        GameContract -> Builtin.endpointsToSchemas @Game.GameSchema
     getContract = \case
         GameContract -> SomeBuiltin (Game.game @ContractError)
 
