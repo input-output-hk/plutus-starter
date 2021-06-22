@@ -18,7 +18,7 @@ let
 
     sha256map = {
       "https://github.com/Quid2/flat.git"."95e5d7488451e43062ca84d5376b3adcc465f1cd" = "06l31x3y93rjpryvlxnpsyq2zyxvb0z6lik6yq2fvh36i5zwvwa3";
-      "https://github.com/input-output-hk/plutus.git"."7c2a01f3c94b296fda377c63bf8fab582d82498e" = "0sw2w8wpbnxjxnhal281byg9xq7b5dwlcfv02mdfs7jyg6ia3h9i";
+      "https://github.com/input-output-hk/plutus.git"."plutus-starter-devcontainer/v1.0.6" = "1jzbcsdrv0b43dj7bwbd1fbk71f7gph6zzb8y29n9cn3j8illnyc";
       "https://github.com/shmish111/purescript-bridge.git"."6a92d7853ea514be8b70bab5e72077bf5a510596" = "13j64vv116in3c204qsl1v0ajphac9fqvsjp7x3zzfr7n7g61drb";
       "https://github.com/shmish111/servant-purescript.git"."a76104490499aa72d40c2790d10e9383e0dbde63" = "11nxxmi5bw66va7psvrgrw7b7n85fvqgfp58yva99w3v9q3a50v9";
       "https://github.com/input-output-hk/cardano-crypto.git"."ce8f1934e4b6252084710975bd9bbc0a4648ece4" = "1v2laq04piyj511b2m77hxjh9l1yd6k9kc7g6bjala4w3zdwa4ni";
@@ -51,4 +51,3 @@ let
   };
 in
   project
-
