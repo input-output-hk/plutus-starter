@@ -1,6 +1,6 @@
 {
     "name": "Plutus Starter Project",
-    "image": "docker.io/inputoutput/plutus-starter-devcontainer:latest",
+    "image": "docker.io/inputoutput/plutus-starter-devcontainer:v1.0.6",
 
     "remoteUser": "plutus",
 
