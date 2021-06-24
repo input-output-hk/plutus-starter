@@ -17,6 +17,7 @@
 {-# LANGUAGE TypeOperators              #-}
 {-# LANGUAGE ViewPatterns               #-}
 
+
 -- | A guessing game
 module Plutus.Contracts.Game
     ( lock
