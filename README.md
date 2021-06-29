@@ -182,3 +182,14 @@ when exiting it by pressing return.
 Finally, also node that the PAB also exposes a websocket, which you can read about in
 the general [PAB Architecture documentation](https://github.com/input-output-hk/plutus/blob/master/plutus-pab/ARCHITECTURE.adoc).
 
+
+## Support/Issues/Community
+
+If you're looking for support, or would simply like to report a bug, feature
+request, etc please do so over on the main [plutus
+repository](https://github.com/input-output-hk/plutus).
+
+For more interactive discussion, you can join the [IOG Technical Community
+Discord](https://discord.com/invite/U4R3EwUs).
+
+Thanks!
