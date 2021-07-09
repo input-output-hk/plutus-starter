@@ -28,6 +28,8 @@ module Plutus.Contracts.Game
 
     -- * Scripts
     gameValidator,
+    gameSBS,
+    gameSerialised,
     hashString,
     clearString,
 
@@ -41,7 +43,8 @@ module Plutus.Contracts.Game
   )
 where
 
-import Cardano.Api.Shelley (PlutusScript (..), PlutusScriptVersion (..))
+import Cardano.Api.Shelley (PlutusScript (..), PlutusScriptVersion (PlutusScriptV1))
+import Codec.Serialise
 import Control.Monad (void)
 import qualified Control.Monad.Freer.Extras.Log as Extras
 import Data.Aeson (FromJSON, ToJSON)
@@ -63,6 +66,7 @@ import Plutus.Contract.Schema ()
 import Plutus.Trace.Emulator (EmulatorTrace, observableState)
 import qualified Plutus.Trace.Emulator as Trace
 import qualified Plutus.V1.Ledger.Scripts as Plutus
+import PlutusTx (Data (..))
 import qualified PlutusTx
 import PlutusTx.Prelude
 import Schema (ToArgument, ToSchema)
@@ -117,7 +121,7 @@ gameInstance =
 -}
 
 gameScript :: Plutus.Script
-gameScript = Plutus.unValidatorScript gameInstance
+gameScript = Plutus.unValidatorScript gameValidator
 
 {-
     As a Short Byte String
@@ -130,7 +134,7 @@ gameSBS = SBS.toShort . LBS.toStrict $ serialise gameScript
     As a Serialised Script
 -}
 
-gameSerialised :: PlutusScript PlutusScriptVersion
+-- gameSerialised :: PlutusScript PlutusScriptV1 
 gameSerialised = PlutusScriptSerialised gameSBS
 
 -- create a data script for the guessing game by hashing the string

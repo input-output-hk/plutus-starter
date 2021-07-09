@@ -39,7 +39,8 @@ library
       plutus-tx-plugin,
       plutus-tx,
       plutus-ledger,
-      plutus-ledger-api
+      plutus-ledger-api,
+      serialise
     hs-source-dirs: src examples/src
     default-language: Haskell2010
     ghc-options:
@@ -87,4 +88,6 @@ executable plutus-starter-pab
     prettyprinter -any,
     freer-extras -any,
     plutus-ledger -any,
-    plutus-ledger-api -any
+    plutus-ledger-api -any,
+    serialise -any,
+    bytestring -any

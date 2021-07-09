@@ -10,7 +10,8 @@
 {-# LANGUAGE TypeOperators #-}
 
 module Main (main) where
-
+import           System.Environment
+import Cardano.Api.Shelley (PlutusScript (..), PlutusScriptVersion (PlutusScriptV1),toPlutusData,displayError, writeFileTextEnvelope,ScriptData(ScriptDataNumber),toPlutusData)
 import Control.Monad (void)
 import Control.Monad.Freer (Eff, Member, interpret, type (~>))
 import Control.Monad.Freer.Error (Error)
@@ -27,6 +28,7 @@ import Data.Aeson
 import Data.Text.Prettyprint.Doc (Pretty (..), viaShow)
 import GHC.Generics (Generic)
 import Plutus.Contract (ContractError)
+import Plutus.Contracts.Game (gameSBS, gameSerialised)
 import Plutus.Contracts.Game as Game
 import Plutus.PAB.Effects.Contract (ContractEffect (..))
 import Plutus.PAB.Effects.Contract.Builtin (Builtin, SomeBuiltin (..), type (.\\))
@@ -37,49 +39,54 @@ import qualified Plutus.PAB.Simulator as Simulator
 import Plutus.PAB.Types (PABError (..))
 import qualified Plutus.PAB.Webserver.Server as PAB.Server
 import Plutus.V1.Ledger.Api as PlutusAPI
-import 
 import Wallet.Emulator.Types (Wallet (..))
-
+import qualified Data.ByteString.Short as SBS
 main :: IO ()
-main = void $
-  Simulator.runSimulationWith handlers $ do
-    Simulator.logString @(Builtin StarterContracts) "Starting plutus-starter PAB webserver on port 8080. Press enter to exit."
-    shutdown <- PAB.Server.startServerDebug
-    -- Example of spinning up a game instance on startup
-    -- You can add simulator actions here:
-    -- Simulator.observableState
-    -- etc.
-    -- That way, the simulation gets to a predefined state and you don't have to
-    -- use the HTTP API for setup.
+main = do
+  args <- getArgs
+  let nargs = length args
+  let scriptnum = if nargs > 0 then read (args !! 0) else 42
+  let scriptName = if nargs > 1 then args !! 1 else "result.plutus"
 
-    -- void $ Simulator.activateContract (Wallet 1) GameContract
-    -- Pressing enter results in the balances being printed
-    void $ liftIO getLine
-    Simulator.logString @(Builtin StarterContracts) "Balances at the end of the simulation"
+  case PlutusAPI.defaultCostModelParams of
+        Just m ->
+          let pData = toPlutusData (ScriptDataNumber scriptnum)
+              (logout, e) = PlutusAPI.evaluateScriptCounting PlutusAPI.Verbose m gameSBS [pData]
+          in do print ("Log output" :: String) >> print logout
+                case e of
+                  Left evalErr -> print ("Eval Error" :: String) >> print evalErr
+                  Right exbudget -> print ("Ex Budget" :: String) >> print exbudget
+        Nothing -> error "defaultCostModelParams failed"
+  -- result <- writeFileTextEnvelope scriptName Nothing gameSerialised
+  -- case result of
+  --   Left err -> print $ displayError err
+  --   Right () -> return ()
+  -- writePlutusScript scriptnum scriptName gameSerialised gameSBS
+  -- Simulator.runSimulationWith handlers $ do
+  --   Simulator.logString @(Builtin StarterContracts) "Starting plutus-starter PAB webserver on port 8080. Press enter to exit."
+  --   shutdown <- PAB.Server.startServerDebug
+  --   -- Example of spinning up a game instance on startup
+  --   -- You can add simulator actions here:
+  --   -- Simulator.observableState
+  --   -- etc.
+  --   -- That way, the simulation gets to a predefined state and you don't have to
+  --   -- use the HTTP API for setup.
 
-    let scriptnum = if nargs > 0 then read (args!!0) else 42
-    let scriptname = if nargs > 1 then args!!1 else  "result.plutus"
-    case PlutusAPI.defaultCostModelParams of
-      Just m ->
-        let pData = toPlutusData (ScriptDataNumber scriptnum)
-            (logout, e) = PlutusAPI.evaluateScriptCounting PlutusAPI.Verbose m scriptSBS [pData]
-         in do
-              print ("Log output" :: String) >> print logout
-              case e of
-                Left evalErr -> print ("Eval Error" :: String) >> print evalErr
-                Right exbudget -> print ("Ex Budget" :: String) >> print exbudget
-      Nothing -> error "defaultCostModelParams failed"
+  --   -- void $ Simulator.activateContract (Wallet 1) GameContract
+  --   -- Pressing enter results in the balances being printed
+  --   void $ liftIO getLine
+  --   Simulator.logString @(Builtin StarterContracts) "Balances at the end of the simulation"
 
-    b <- Simulator.currentBalances
-    Simulator.logBalances @(Builtin StarterContracts) b
+  --   b <- Simulator.currentBalances
+  --   Simulator.logBalances @(Builtin StarterContracts) b
 
-    shutdown
+  --   shutdown
 
 data StarterContracts
   = GameContract
-  | StateMachineGame
+  -- | StateMachineGame
   deriving (Eq, Ord, Show, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+  -- deriving anyclass (ToJSON, FromJSON)
 
 -- NOTE: Because 'StarterContracts' only has one constructor, corresponding to
 -- the demo 'Game' contract, we kindly ask aeson to still encode it as if it had
@@ -88,15 +95,32 @@ data StarterContracts
 -- statement on 'StarterContracts' instead:
 --
 --    `... deriving anyclass (ToJSON, FromJSON)`
--- instance ToJSON StarterContracts where
---   toJSON = genericToJSON defaultOptions {
---              tagSingleConstructors = True }
--- instance FromJSON StarterContracts where
---   parseJSON = genericParseJSON defaultOptions {
---              tagSingleConstructors = True }
+instance ToJSON StarterContracts where
+  toJSON = genericToJSON defaultOptions {
+             tagSingleConstructors = True }
+instance FromJSON StarterContracts where
+  parseJSON = genericParseJSON defaultOptions {
+             tagSingleConstructors = True }
 
 instance Pretty StarterContracts where
   pretty = viaShow
+
+-- writePlutusScript :: Integer -> FilePath -> PlutusScript (PlutusScriptVersion PlutusScriptV1) -> SBS.ShortByteString -> IO ()
+-- writePlutusScript scriptnum scriptName gameSerialised gameSBS =
+--   do
+--   case PlutusAPI.defaultCostModelParams of
+--         Just m ->
+--           let pData = toPlutusData (ScriptDataNumber scriptnum)
+--               (logout, e) = PlutusAPI.evaluateScriptCounting PlutusAPI.Verbose m gameSBS [pData]
+--           in do print ("Log output" :: String) >> print logout
+--                 case e of
+--                   Left evalErr -> print ("Eval Error" :: String) >> print evalErr
+--                   Right exbudget -> print ("Ex Budget" :: String) >> print exbudget
+--         Nothing -> error "defaultCostModelParams failed"
+--   result <- writeFileTextEnvelope scriptName Nothing gameSerialised
+--   case result of
+--     Left err -> print $ displayError err
+--     Right () -> return ()
 
 handleStarterContract ::
   ( Member (Error PABError) effs,
