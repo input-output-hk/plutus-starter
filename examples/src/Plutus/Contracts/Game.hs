@@ -146,12 +146,12 @@ lock = do
 
 guess :: (AsContractError e) => Contract () GameSchema e ()
 guess = do
-    -- Wait for script to have a UTxO of a least 1 lovelace
-    logInfo @Prelude.String "Waiting for script to have a UTxO of at least 1 lovelace"
-    utxos <- fundsAtAddressGeq gameAddress (Ada.lovelaceValueOf 1)
     -- Wait for a call on the guess endpoint
     logInfo @Prelude.String "Waiting for guess endpoint..."
     GuessParams theGuess <- endpoint @"guess" @GuessParams
+    -- Wait for script to have a UTxO of a least 1 lovelace
+    logInfo @Prelude.String "Waiting for script to have a UTxO of at least 1 lovelace"
+    utxos <- fundsAtAddressGeq gameAddress (Ada.lovelaceValueOf 1)
 
     let redeemer = clearString theGuess
         tx       = collectFromScript utxos redeemer
