@@ -36,12 +36,15 @@ theContract = game
 -- No funds locked, so W2 (and other wallets) should not have access to guess endpoint
 tests :: TestTree
 tests = testGroup "game"
-    [ checkPredicate "Expose 'lock' endpoint, but not 'guess' endpoint"
-        (endpointAvailable @"lock" theContract t1
-          .&&. not (endpointAvailable @"guess" theContract t1))
-        $ void $ Trace.activateContractWallet w1 (lock @ContractError)
+    [
+-- Note: Used to be the case prior Promises but now we expose both at once
+--
+--      checkPredicate "Expose 'lock' endpoint, but not 'guess' endpoint"
+--        (endpointAvailable @"lock" theContract t1
+--          .&&. not (endpointAvailable @"guess" theContract t1))
+--        $ void $ Trace.activateContractWallet w1 (lock @ContractError)
 
-    , checkPredicate "'lock' endpoint submits a transaction"
+      checkPredicate "'lock' endpoint submits a transaction"
         (anyTx theContract t1)
         $ do
             hdl <- Trace.activateContractWallet w1 theContract
@@ -75,4 +78,4 @@ tests = testGroup "game"
 
 wrongGuessExpectedError :: ContractError
 wrongGuessExpectedError =
-  WalletError (ValidationError (ScriptFailure (EvaluationError [])))
+  WalletError (ValidationError (ScriptFailure (EvaluationError ["Bad guess", "Check has failed"])))

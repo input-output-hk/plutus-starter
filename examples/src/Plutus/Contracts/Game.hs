@@ -16,6 +16,7 @@
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
 {-# LANGUAGE ViewPatterns               #-}
+{-# LANGUAGE OverloadedStrings          #-}
 
 
 -- | A guessing game
@@ -64,13 +65,13 @@ import           Data.Void                      (Void)
 import qualified Control.Monad.Freer.Extras.Log as Extras
 
 newtype HashedString = HashedString ByteString
-  deriving newtype PlutusTx.IsData
+  deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
   deriving Prelude.Show
 
 PlutusTx.makeLift ''HashedString
 
 newtype ClearString = ClearString ByteString
-  deriving newtype PlutusTx.IsData
+  deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
   deriving Prelude.Show
 
 PlutusTx.makeLift ''ClearString
@@ -82,7 +83,7 @@ type GameSchema =
 -- | The validation function (DataValue -> RedeemerValue -> ScriptContext -> Bool)
 {-# INLINABLE validateGuess #-}
 validateGuess :: HashedString -> ClearString -> ScriptContext -> Bool
-validateGuess hs cs _ = isGoodGuess hs cs
+validateGuess hs cs _ = traceIfFalse "Bad guess" (isGoodGuess hs cs)
 
 {-# INLINABLE isGoodGuess #-}
 isGoodGuess :: HashedString -> ClearString -> Bool
@@ -134,24 +135,20 @@ newtype GuessParams = GuessParams
 
 game :: (AsContractError e, ToJSON e) => Contract () GameSchema e ()
 game = do
-  lock `select` guess
+  logInfo @Prelude.String "Waiting for guess or lock endpoint..."
+  selectList [lock, guess]
 
-lock :: (AsContractError e) => Contract () GameSchema e ()
-lock = do
-    logInfo @Prelude.String "Waiting for lock endpoint..."
-    LockParams secret amt <- endpoint @"lock" @LockParams
+lock :: (AsContractError e) => Promise () GameSchema e ()
+lock = endpoint @"lock" @LockParams $ \(LockParams secret amt) -> do
     logInfo @Prelude.String $ "Pay " <> Prelude.show amt <> " to the script"
     let tx         = Constraints.mustPayToTheScript (hashString secret) amt
     void (submitTxConstraints gameInstance tx)
 
-guess :: (AsContractError e) => Contract () GameSchema e ()
-guess = do
+guess :: (AsContractError e) => Promise () GameSchema e ()
+guess = endpoint @"guess" @GuessParams $ \(GuessParams theGuess) -> do
     -- Wait for script to have a UTxO of a least 1 lovelace
     logInfo @Prelude.String "Waiting for script to have a UTxO of at least 1 lovelace"
     utxos <- fundsAtAddressGeq gameAddress (Ada.lovelaceValueOf 1)
-    -- Wait for a call on the guess endpoint
-    logInfo @Prelude.String "Waiting for guess endpoint..."
-    GuessParams theGuess <- endpoint @"guess" @GuessParams
 
     let redeemer = clearString theGuess
         tx       = collectFromScript utxos redeemer
@@ -159,9 +156,10 @@ guess = do
     -- Log a message saying if the secret word was correctly guessed
     let hashedSecretWord = findSecretWordValue utxos
         isCorrectSecretWord = fmap (`isGoodGuess` redeemer) hashedSecretWord == Just True
-    if isCorrectSecretWord
-       then logWarn "Correct secret word! Submitting the transaction"
-       else logWarn "Incorrect secret word, but still submiting the transaction"
+    logWarn @Prelude.String
+      $ if isCorrectSecretWord
+         then "Correct secret word! Submitting the transaction"
+         else "Incorrect secret word, but still submiting the transaction"
 
     -- This is only for test purposes to have a possible failing transaction.
     -- In a real use-case, we would not submit the transaction if the guess is
@@ -179,7 +177,7 @@ secretWordValue :: TxOutTx -> Maybe HashedString
 secretWordValue o = do
   dh <- Ledger.txOutDatum $ Ledger.txOutTxOut o
   Datum d <- Map.lookup dh $ Ledger.txData $ Ledger.txOutTxTx o
-  PlutusTx.fromData d
+  PlutusTx.fromBuiltinData d
 
 lockTrace :: Wallet -> Prelude.String -> EmulatorTrace ()
 lockTrace wallet secretWord = do

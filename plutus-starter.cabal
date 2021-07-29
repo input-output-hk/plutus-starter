@@ -73,6 +73,7 @@ executable plutus-starter-pab
     -threaded
   build-depends:
     base >= 4.9 && < 5,
+    data-default -any,
     plutus-contract -any,
     plutus-pab -any,
     plutus-starter -any,

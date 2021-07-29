@@ -1,4 +1,4 @@
-index-state: 2021-04-13T00:00:00Z
+index-state: 2021-07-07T00:00:00Z
 
 packages: ./.
 
@@ -9,13 +9,14 @@ write-ghc-environment-files: never
 tests: true
 benchmarks: true
 
--- Plutus revision from 2021/06/11
+-- Plutus revision from 2021/08/28
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/plutus.git
   subdir:
     freer-extras
     playground-common
+    plutus-chain-index
     plutus-core
     plutus-contract
     plutus-ledger
@@ -27,7 +28,7 @@ source-repository-package
     prettyprinter-configurable
     quickcheck-dynamic
     word-array
-  tag: plutus-starter-devcontainer/v1.0.6
+  tag: 52b23b80dc46048214ea169933e79678f806aa2b
 
 -- The following sections are copied from the 'plutus' repository cabal.project at the revision
 -- given above.
@@ -52,6 +53,7 @@ allow-newer:
            , eventful-sql-common:persistent
            , eventful-sql-common:persistent-template
            , ouroboros-consensus-byron:formatting
+           , libsystemd-journal:base
 
 constraints:
   -- aws-lambda-haskell-runtime-wai doesn't compile with newer versions
@@ -60,6 +62,8 @@ constraints:
   , singletons < 3.0
   -- breaks eventful even more than it already was
   , persistent-template < 2.12
+  , libsystemd-journal >= 1.4.4
+  , systemd >= 2.3.0
 
 -- Drops an instance breaking our code. Should be released to Hackage eventually.
 source-repository-package
@@ -107,8 +111,9 @@ source-repository-package
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/ouroboros-network
-  tag: e50613562d6d4a0f933741fcf590b0f69a1eda67
+  tag: e338f2cf8e1078fbda9555dd2b169c6737ef6774
   subdir:
+    monoidal-synchronisation
     typed-protocols
     typed-protocols-examples
     ouroboros-network
@@ -119,7 +124,7 @@ source-repository-package
     ouroboros-consensus-cardano
     ouroboros-consensus-shelley
     io-sim
-    io-sim-classes
+    io-classes
     network-mux
 
 source-repository-package
@@ -130,12 +135,16 @@ source-repository-package
     iohk-monitoring
     tracer-transformers
     contra-tracer
+    plugins/backend-aggregation
     plugins/backend-ekg
+    plugins/backend-monitoring
+    plugins/backend-trace-forwarder
+    plugins/scribe-systemd
 
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/cardano-ledger-specs
-  tag: a3ef848542961079b7cd53d599e5385198a3035c
+  tag: 6b0fca7a73c317f3af7c14dd4dc38178cc78a6c8
   subdir:
     byron/chain/executable-spec
     byron/crypto
@@ -158,9 +167,12 @@ source-repository-package
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/cardano-node.git
-  tag: b3cabae6b3bf30a0b1b4e78bc4b67282dabad0a6
+  tag: f3ef4ed72894499160f2330b91572a159005c148
   subdir:
     cardano-api
+    cardano-cli
+    cardano-config
+    cardano-node
 
 source-repository-package
   type: git
