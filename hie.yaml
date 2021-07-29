@@ -1,2 +1,10 @@
 cradle:
   cabal:
+    - path: "./src"
+      component: "plutus-starter:lib:plutus-starter"
+    - path: "./examples/src"
+      component: "plutus-starter:lib:plutus-starter"
+    - path: "./examples/test"
+      component: "plutus-starter:test:plutus-example-projects-test"
+    - path: "./pab"
+      component: "plutus-starter:exe:plutus-starter-pab"
