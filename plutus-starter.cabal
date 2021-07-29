@@ -35,7 +35,6 @@ common lang
       -Wredundant-constraints -Widentities -rtsopts
       -- See Plutus Tx readme
       -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
-    -- See Plutus Tx readme
     if flag(defer-plugin-errors)
         ghc-options: -fplugin-opt PlutusTx.Plugin:defer-errors
 
