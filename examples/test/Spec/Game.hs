@@ -1,25 +1,25 @@
-{-# LANGUAGE DataKinds        #-}
-{-# LANGUAGE TemplateHaskell  #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE NumericUnderscores     #-}
+{-# LANGUAGE DataKinds          #-}
+{-# LANGUAGE NumericUnderscores #-}
+{-# LANGUAGE TemplateHaskell    #-}
+{-# LANGUAGE TypeApplications   #-}
 
 module Spec.Game
     ( tests
     ) where
 
 import           Control.Monad         (void)
-import           Ledger                (ValidationError(ScriptFailure), ScriptError(EvaluationError))
+import           Ledger                (ScriptError (EvaluationError), ValidationError (ScriptFailure))
 import qualified Ledger.Ada            as Ada
-import           Plutus.Contract       (Contract, ContractError(WalletError))
-import           Wallet.API (WalletAPIError(ValidationError))
+import           Plutus.Contract       (Contract, ContractError (WalletError))
 import           Plutus.Contract.Test
 import           Plutus.Contracts.Game
 import           Plutus.Trace.Emulator (ContractInstanceTag)
 import qualified Plutus.Trace.Emulator as Trace
 import qualified PlutusTx
+import           Prelude               hiding (not)
 import           Test.Tasty
 import qualified Test.Tasty.HUnit      as HUnit
-import Prelude hiding (not)
+import           Wallet.API            (WalletAPIError (ValidationError))
 
 w1, w2 :: Wallet
 w1 = Wallet 1

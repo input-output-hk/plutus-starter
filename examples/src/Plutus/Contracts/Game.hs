@@ -8,6 +8,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE NoImplicitPrelude          #-}
+{-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE PartialTypeSignatures      #-}
 {-# LANGUAGE RecordWildCards            #-}
 {-# LANGUAGE ScopedTypeVariables        #-}
@@ -16,7 +17,6 @@
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
 {-# LANGUAGE ViewPatterns               #-}
-{-# LANGUAGE OverloadedStrings          #-}
 
 
 -- | A guessing game
@@ -41,8 +41,9 @@ module Plutus.Contracts.Game
 
 import           Control.Monad                  (void)
 import           Data.Aeson                     (FromJSON, ToJSON)
+import qualified Data.Map                       as Map
 import           GHC.Generics                   (Generic)
-import           Ledger                         (Address, Datum(Datum), ScriptContext, TxOutTx, Validator, Value)
+import           Ledger                         (Address, Datum (Datum), ScriptContext, TxOutTx, Validator, Value)
 import qualified Ledger
 import qualified Ledger.Ada                     as Ada
 import           Ledger.AddressMap              (UtxoMap)
@@ -54,15 +55,14 @@ import           Plutus.Trace.Emulator          (EmulatorTrace, observableState)
 import qualified Plutus.Trace.Emulator          as Trace
 import qualified PlutusTx
 import           PlutusTx.Prelude
-import qualified Data.Map                       as Map
 import           Schema                         (ToArgument, ToSchema)
 import           Wallet.Emulator                (Wallet (..))
 
+import qualified Control.Monad.Freer.Extras.Log as Extras
 import qualified Data.ByteString.Char8          as C
-import qualified Prelude
 import           Data.Maybe                     (catMaybes)
 import           Data.Void                      (Void)
-import qualified Control.Monad.Freer.Extras.Log as Extras
+import qualified Prelude
 
 newtype HashedString = HashedString ByteString
   deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)

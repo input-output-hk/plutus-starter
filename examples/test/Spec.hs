@@ -3,7 +3,7 @@ module Main(main) where
 
 import qualified Spec.Game
 import           Test.Tasty
-import           Test.Tasty.Hedgehog       (HedgehogTestLimit (..))
+import           Test.Tasty.Hedgehog (HedgehogTestLimit (..))
 
 main :: IO ()
 main = defaultMain tests
