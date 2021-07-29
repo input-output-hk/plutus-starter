@@ -21,7 +21,26 @@ maintainer:         Your email
 -- category:
 -- extra-source-files: CHANGELOG.md
 
+flag defer-plugin-errors
+    description:
+        Defer errors from the plugin, useful for things like Haddock that can't handle it.
+    default: False
+    manual: True
+
+common lang
+    default-language:   Haskell2010
+    ghc-options:
+      -Wall -Wnoncanonical-monad-instances
+      -Wincomplete-uni-patterns -Wincomplete-record-updates
+      -Wredundant-constraints -Widentities -rtsopts
+      -- See Plutus Tx readme
+      -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
+    -- See Plutus Tx readme
+    if flag(defer-plugin-errors)
+        ghc-options: -fplugin-opt PlutusTx.Plugin:defer-errors
+
 library
+    import: lang
     exposed-modules:
       MyModule
       Plutus.Contracts.Game
@@ -37,23 +56,14 @@ library
       plutus-tx,
       plutus-ledger
     hs-source-dirs: src examples/src
-    default-language: Haskell2010
-    ghc-options:
-            -- See Plutus Tx readme
-            -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
 
 test-suite plutus-example-projects-test
+  import: lang
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   hs-source-dirs: examples/test
   other-modules:
     Spec.Game
-  default-language: Haskell2010
-  ghc-options: -Wall -Wnoncanonical-monad-instances
-              -Wincomplete-uni-patterns -Wincomplete-record-updates
-              -Wredundant-constraints -Widentities -rtsopts
-              -- See Plutus Tx readme
-              -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
   build-depends:
     plutus-tx -any,
     plutus-tx-plugin,
@@ -67,6 +77,7 @@ test-suite plutus-example-projects-test
     tasty-hedgehog >=0.2.0.0
 
 executable plutus-starter-pab
+  import: lang
   main-is: Main.hs
   hs-source-dirs: pab
   ghc-options:
