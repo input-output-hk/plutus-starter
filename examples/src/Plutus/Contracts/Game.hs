@@ -44,12 +44,11 @@ import           GHC.Generics                   (Generic)
 import           Ledger                         (Address, Datum(Datum), ScriptContext, TxOutTx, Validator, Value)
 import qualified Ledger
 import qualified Ledger.Ada                     as Ada
-import           Ledger.AddressMap              (UtxoMap)
 import qualified Ledger.Constraints             as Constraints
 import qualified Ledger.Typed.Scripts           as Scripts
 import           Plutus.Contract
 import           Plutus.Contract.Schema         ()
-import           Plutus.Trace.Emulator          (EmulatorTrace, observableState)
+import           Plutus.Trace.Emulator          (EmulatorTrace)
 import qualified Plutus.Trace.Emulator          as Trace
 import qualified PlutusTx
 import           PlutusTx.Prelude
@@ -60,8 +59,6 @@ import           Wallet.Emulator                (Wallet (..))
 import qualified Data.ByteString.Char8          as C
 import qualified Prelude
 import           Data.Maybe                     (catMaybes)
-import           Data.Void                      (Void)
-import qualified Control.Monad.Freer.Extras.Log as Extras
 
 newtype HashedString = HashedString ByteString
   deriving newtype PlutusTx.IsData
@@ -132,7 +129,7 @@ newtype GuessParams = GuessParams
     deriving stock (Prelude.Eq, Prelude.Show, Generic)
     deriving anyclass (FromJSON, ToJSON, ToSchema, ToArgument)
 
-game :: (AsContractError e, ToJSON e) => Contract () GameSchema e ()
+game :: (AsContractError e) => Contract () GameSchema e ()
 game = do
   lock `select` guess
 
