@@ -14,5 +14,6 @@ in
       stylish-haskell
       pkgs.niv
       cardano-repo-tool
+      pkgs.ghcid
     ];
   }
