@@ -190,6 +190,6 @@ request, etc please do so over on the main [plutus
 repository](https://github.com/input-output-hk/plutus).
 
 For more interactive discussion, you can join the [IOG Technical Community
-Discord](https://discord.com/invite/U4R3EwUs).
+Discord](https://discord.gg/sSF5gmDBYg).
 
 Thanks!
