@@ -4,6 +4,8 @@
 { haskell-nix
 , gitignore-nix
 , compiler-nix-name
+, lib
+, libsodium-vrf
 }:
 
 let
@@ -37,15 +39,13 @@ let
     modules = [
       {
         packages = {
-          eventful-sql-common = {
-            # This is needed so evenful-sql-common will build with a newer version of persistent.
-            ghcOptions = [ "-XDerivingStrategies -XStandaloneDeriving -XUndecidableInstances -XDataKinds -XFlexibleInstances -XMultiParamTypeClasses" ];
-            doHaddock = false;
-          };
-
           # Broken due to haddock errors. Refer to https://github.com/input-output-hk/plutus/blob/master/nix/pkgs/haskell/haskell.nix
           plutus-ledger.doHaddock = false;
           plutus-use-cases.doHaddock = false;
+
+          # See https://github.com/input-output-hk/iohk-nix/pull/488
+          cardano-crypto-praos.components.library.pkgconfig = lib.mkForce [ [ libsodium-vrf ] ];
+          cardano-crypto-class.components.library.pkgconfig = lib.mkForce [ [ libsodium-vrf ] ];
         };
       }
     ];
