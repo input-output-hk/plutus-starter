@@ -83,7 +83,7 @@ First, let's verify that the game is present in the server:
 3. Check what contracts are present:
 
 ```
-curl -s http://localhost:8080/api/new/contract/definitions | jq
+curl -s http://localhost:9080/api/contract/definitions | jq
 ```
 
 You should receive a list of contracts and the endpoints that can be called on them, and the arguments
@@ -104,13 +104,13 @@ locked; otherwise, they won't!
 curl -s -H "Content-Type: application/json" \
   --request POST \
   --data '{"caID": "GameContract", "caWallet":{"getWallet": 1}}' \
-  http://localhost:8080/api/new/contract/activate | jq
+  http://localhost:9080/api/contract/activate | jq
 
 # Wallet 2
 curl -s -H "Content-Type: application/json" \
   --request POST \
   --data '{"caID": "GameContract", "caWallet":{"getWallet": 2}}' \
-  http://localhost:8080/api/new/contract/activate | jq
+  http://localhost:9080/api/contract/activate | jq
 ```
 
 From these two queries you will get back two contract instance IDs. These will be needed
@@ -121,7 +121,7 @@ of the contract with the `status` API:
 
 ```
 export INSTANCE_ID=...
-curl -s http://localhost:8080/api/new/contract/instance/$INSTANCE_ID/status | jq
+curl -s http://localhost:9080/api/contract/instance/$INSTANCE_ID/status | jq
 ```
 
 This has a lot of information; and in particular we can see what endpoints are still available
@@ -154,7 +154,7 @@ export INSTANCE_ID=...
 curl -H "Content-Type: application/json" \
   --request POST \
   --data '{"amount":{"getValue":[[{"unCurrencySymbol":""},[[{"unTokenName":""},90]]]]},"secretWord":"eagle"}' \
-  http://localhost:8080/api/new/contract/instance/$INSTANCE_ID/endpoint/lock
+  http://localhost:9080/api/contract/instance/$INSTANCE_ID/endpoint/lock
 ```
 
 We can do likewise to work out what the JSON for `GuessParams` is, and then make a guess from
@@ -167,7 +167,7 @@ export INSTANCE_ID=...
 curl -H "Content-Type: application/json" \
   --request POST \
   --data '{"guessWord": "duck"}' \
-  http://localhost:8080/api/new/contract/instance/$INSTANCE_ID/endpoint/guess
+  http://localhost:9080/api/contract/instance/$INSTANCE_ID/endpoint/guess
 ```
 
 Note that this guess is wrong, so in the log of the server we will see that the transaction

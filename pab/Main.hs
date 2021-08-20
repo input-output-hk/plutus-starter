@@ -17,11 +17,12 @@ import           Control.Monad.Freer.Error           (Error)
 import           Control.Monad.IO.Class              (MonadIO (..))
 import           Data.Aeson                          (FromJSON (..), ToJSON (..), genericToJSON, genericParseJSON
                                                      , defaultOptions, Options(..))
+import           Data.Default                        (def)
 import           Data.Text.Prettyprint.Doc           (Pretty (..), viaShow)
 import           GHC.Generics                        (Generic)
 import           Plutus.Contract                     (ContractError)
 import           Plutus.PAB.Effects.Contract         (ContractEffect (..))
-import           Plutus.PAB.Effects.Contract.Builtin (Builtin, SomeBuiltin (..))
+import           Plutus.PAB.Effects.Contract.Builtin (Builtin, SomeBuiltin (..), BuiltinHandler(contractHandler))
 import qualified Plutus.PAB.Effects.Contract.Builtin as Builtin
 import           Plutus.PAB.Monitoring.PABLogMsg     (PABMultiAgentMsg)
 import           Plutus.PAB.Simulator                (SimulatorEffectHandlers)
@@ -72,20 +73,15 @@ instance FromJSON StarterContracts where
 instance Pretty StarterContracts where
     pretty = viaShow
 
-handleStarterContract ::
-    ( Member (Error PABError) effs
-    , Member (LogMsg (PABMultiAgentMsg (Builtin StarterContracts))) effs
-    )
-    => ContractEffect (Builtin StarterContracts)
-    ~> Eff effs
-handleStarterContract = Builtin.handleBuiltin getSchema getContract where
-    getSchema = \case
+instance Builtin.HasDefinitions StarterContracts where
+    getDefinitions = [GameContract]
+    getSchema =  \case
         GameContract -> Builtin.endpointsToSchemas @Game.GameSchema
     getContract = \case
         GameContract -> SomeBuiltin (Game.game @ContractError)
 
 handlers :: SimulatorEffectHandlers (Builtin StarterContracts)
 handlers =
-    Simulator.mkSimulatorHandlers @(Builtin StarterContracts) [GameContract]
-    $ interpret handleStarterContract
+    Simulator.mkSimulatorHandlers def def
+    $ interpret (contractHandler Builtin.handleBuiltin)
 
