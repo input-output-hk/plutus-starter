@@ -42,7 +42,7 @@ import           Control.Monad         (void)
 import qualified Data.ByteString.Char8 as C
 import qualified Data.Map              as Map
 import           Data.Maybe            (catMaybes)
-import           Ledger                (Address, Datum (Datum), ScriptContext, TxOutTx, Validator, Value)
+import           Ledger                (Address, Datum (Datum), ScriptContext, Validator, Value)
 import qualified Ledger
 import qualified Ledger.Ada            as Ada
 import qualified Ledger.Constraints    as Constraints
@@ -149,16 +149,14 @@ guess = endpoint @"guess" @GuessParams $ \(GuessParams theGuess) -> do
     void (submitTxConstraintsSpending gameInstance utxos tx)
 
 -- | Find the secret word in the Datum of the UTxOs
-findSecretWordValue :: UtxoMap -> Maybe HashedString
+findSecretWordValue :: Map.Map TxOutRef Ledger.ChainIndexTxOut -> Maybe HashedString
 findSecretWordValue =
   listToMaybe . catMaybes . Map.elems . Map.map secretWordValue
 
 -- | Extract the secret word in the Datum of a given transaction output is possible
-secretWordValue :: TxOutTx -> Maybe HashedString
-secretWordValue o = do
-  dh <- Ledger.txOutDatum $ Ledger.txOutTxOut o
-  Datum d <- Map.lookup dh $ Ledger.txData $ Ledger.txOutTxTx o
-  PlutusTx.fromBuiltinData d
+secretWordValue :: Ledger.ChainIndexTxOut -> Maybe HashedString
+secretWordValue (Ledger.ScriptChainIndexTxOut _ _ (Right (Datum d)) _) = PlutusTx.fromBuiltinData d
+secretWordValue _ = Nothing
 
 game :: AsContractError e => Contract () GameSchema e ()
 game = do

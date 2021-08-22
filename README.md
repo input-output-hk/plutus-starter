@@ -70,10 +70,11 @@ have `jq` installed.
 cabal build plutus-starter-pab
 ```
 
-2. Run the PAB binary:
+2. Run the PAB binary (migrate DB first!):
 
 ```
-cabal exec -- plutus-starter-pab
+cabal exec plutus-starter-pab -- --config plutus-pab.yaml.sample migrate
+cabal exec plutus-starter-pab -- --config plutus-pab.yaml.sample all-servers
 ````
 
 This will then start up the server on port 9080. The devcontainer process will then automatically expose this port so that you can connect to it from any terminal (it doesn't have to be a terminal running in the devcontainer).
@@ -176,12 +177,22 @@ didn't validate.
 As an exercise, you can now spin up another instance for Wallet 2 and make a correct guess, and
 confirm that the transaction validates and the Ada is transferred into the right wallet.
 
-Note that you can verify the balances by looking at the log of `plutus-starter-pab`
-when exiting it by pressing return.
-
 Finally, also node that the PAB also exposes a websocket, which you can read about in
 the general [PAB Architecture documentation](https://github.com/input-output-hk/plutus/blob/master/plutus-pab/ARCHITECTURE.adoc).
 
+### Get data through the Chain Index server
+
+The chain index is a program that follows the cardano blockchain and stores information from the chain in a database.
+The information that is stored is useful for Plutus smart contracts: Various hash values and transaction information.
+
+The chain index is intended to be used primarily by the PAB, but its HTTP interface can be accessed by other applications also. DApp builders can also customize and extend this component to structure their application-specific cache to improve certain data queries. Then expose those read-only endpoints to both internal and external applications.
+
+Example:
+```
+curl -s http://localhost:9083/tip | jq
+```
+
+For more information please see [the new package](https://github.com/input-output-hk/plutus/tree/master/plutus-chain-index), and [the current one](https://github.com/input-output-hk/plutus/tree/master/plutus-pab/src/Cardano/ChainIndex).
 
 ## Support/Issues/Community
 
