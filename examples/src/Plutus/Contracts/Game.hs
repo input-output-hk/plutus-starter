@@ -163,7 +163,7 @@ secretWordValue o = do
 game :: AsContractError e => Contract () GameSchema e ()
 game = do
     logInfo @Haskell.String "Waiting for guess or lock endpoint..."
-    selectList [lock, guess]
+    selectList [lock, guess] >> game
 
 
 lockTrace :: Wallet -> Haskell.String -> EmulatorTrace ()
