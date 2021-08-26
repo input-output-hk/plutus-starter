@@ -11,9 +11,7 @@
 module Main(main) where
 
 import           Control.Monad                       (void)
-import           Control.Monad.Freer                 (Eff, Member, interpret, type (~>))
-import           Control.Monad.Freer.Extras.Log      (LogMsg)
-import           Control.Monad.Freer.Error           (Error)
+import           Control.Monad.Freer                 (interpret)
 import           Control.Monad.IO.Class              (MonadIO (..))
 import           Data.Aeson                          (FromJSON (..), ToJSON (..), genericToJSON, genericParseJSON
                                                      , defaultOptions, Options(..))
@@ -21,13 +19,10 @@ import           Data.Default                        (def)
 import           Data.Text.Prettyprint.Doc           (Pretty (..), viaShow)
 import           GHC.Generics                        (Generic)
 import           Plutus.Contract                     (ContractError)
-import           Plutus.PAB.Effects.Contract         (ContractEffect (..))
 import           Plutus.PAB.Effects.Contract.Builtin (Builtin, SomeBuiltin (..), BuiltinHandler(contractHandler))
 import qualified Plutus.PAB.Effects.Contract.Builtin as Builtin
-import           Plutus.PAB.Monitoring.PABLogMsg     (PABMultiAgentMsg)
 import           Plutus.PAB.Simulator                (SimulatorEffectHandlers)
 import qualified Plutus.PAB.Simulator                as Simulator
-import           Plutus.PAB.Types                    (PABError (..))
 import qualified Plutus.PAB.Webserver.Server         as PAB.Server
 import           Plutus.Contracts.Game               as Game
 
