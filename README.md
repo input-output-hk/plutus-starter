@@ -76,7 +76,7 @@ cabal build plutus-starter-pab
 cabal exec -- plutus-starter-pab
 ````
 
-This will then start up the server on port 8080. The devcontainer process will then automatically expose this port so that you can connect to it from any terminal (it doesn't have to be a terminal running in the devcontainer).
+This will then start up the server on port 9080. The devcontainer process will then automatically expose this port so that you can connect to it from any terminal (it doesn't have to be a terminal running in the devcontainer).
 
 First, let's verify that the game is present in the server:
 
