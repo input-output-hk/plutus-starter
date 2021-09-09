@@ -97,19 +97,26 @@ The game has two players (wallets). One will initialise the contract and lock a 
 wallet will then make guesses. Supposing they guess correctly, they'll receive the funds that were
 locked; otherwise, they won't!
 
-1. Start the instances:
+
+1. Create wallets
+```
+export WALLET_ID_1=`curl -s -d '' http://localhost:9080/wallet/create | jq '.wiWallet.getWalletId'`
+export WALLET_ID_2=`curl -s -d '' http://localhost:9080/wallet/create | jq '.wiWallet.getWalletId'`
+```
+
+2. Start the instances:
 
 ```
 # Wallet 1
 curl -s -H "Content-Type: application/json" \
   --request POST \
-  --data '{"caID": "GameContract", "caWallet":{"getWallet": 1}}' \
+  --data '{"caID": "GameContract", "caWallet":{"getWalletId": '$WALLET_ID_1'}}' \
   http://localhost:9080/api/contract/activate | jq
 
 # Wallet 2
 curl -s -H "Content-Type: application/json" \
   --request POST \
-  --data '{"caID": "GameContract", "caWallet":{"getWallet": 2}}' \
+  --data '{"caID": "GameContract", "caWallet":{"getWalletId": '$WALLET_ID_2'}}' \
   http://localhost:9080/api/contract/activate | jq
 ```
 
@@ -117,7 +124,7 @@ From these two queries you will get back two contract instance IDs. These will b
 in the subsequent steps for running actions against. We can optionally take a look at the state
 of the contract with the `status` API:
 
-2. Get the status
+3. Get the status
 
 ```
 export INSTANCE_ID=...
@@ -127,7 +134,7 @@ curl -s http://localhost:9080/api/contract/instance/$INSTANCE_ID/status | jq
 This has a lot of information; and in particular we can see what endpoints are still available
 to call.
 
-3. Start the game by locking some value inside
+4. Start the game by locking some value inside
 
 Now, let's call the `lock` endpoint to start the game. In order to do so, we need to construct
 a JSON representation of the `LockParams` that the endpoint takes (look at `Game.hs`). The easiest
@@ -147,7 +154,7 @@ cabal repl
 Great! This is all we need to call the `lock` endpoint, so let's do that now with
 the instance from Wallet 1:
 
-4. Lock some value (Wallet 1)
+5. Lock some value (Wallet 1)
 
 ```
 export INSTANCE_ID=...
@@ -160,7 +167,7 @@ curl -H "Content-Type: application/json" \
 We can do likewise to work out what the JSON for `GuessParams` is, and then make a guess from
 Wallet 2:
 
-5. Make a guess (Wallet 2)
+6. Make a guess (Wallet 2)
 
 ```
 export INSTANCE_ID=...

@@ -20,7 +20,8 @@
           StakingPtr
           (fun
             (con integer)
-            (fun (con integer) (fun (con integer) StakingCredential)))
+            (fun (con integer) (fun (con integer) StakingCredential))
+          )
         )
       )
     )
@@ -165,13 +166,16 @@
                     [
                       [
                         (lam
-                          k (type) (lam v (type) [ List [ [ Tuple2 k ] v ] ]))
+                          k (type) (lam v (type) [ List [ [ Tuple2 k ] v ] ])
+                        )
                         (con bytestring)
                       ]
                       (con integer)
                     ]
                   ]
-                  (fun [ Maybe (con bytestring) ] TxOut)))
+                  (fun [ Maybe (con bytestring) ] TxOut)
+                )
+              )
             )
           )
         )
@@ -198,13 +202,15 @@
                     [
                       [
                         (lam
-                          k (type) (lam v (type) [ List [ [ Tuple2 k ] v ] ]))
+                          k (type) (lam v (type) [ List [ [ Tuple2 k ] v ] ])
+                        )
                         (con bytestring)
                       ]
                       [
                         [
                           (lam
-                            k (type) (lam v (type) [ List [ [ Tuple2 k ] v ] ]))
+                            k (type) (lam v (type) [ List [ [ Tuple2 k ] v ] ])
+                          )
                           (con bytestring)
                         ]
                         (con integer)
@@ -214,7 +220,8 @@
                       [
                         [
                           (lam
-                            k (type) (lam v (type) [ List [ [ Tuple2 k ] v ] ]))
+                            k (type) (lam v (type) [ List [ [ Tuple2 k ] v ] ])
+                          )
                           (con bytestring)
                         ]
                         [
@@ -222,7 +229,8 @@
                             (lam
                               k
                               (type)
-                              (lam v (type) [ List [ [ Tuple2 k ] v ] ]))
+                              (lam v (type) [ List [ [ Tuple2 k ] v ] ])
+                            )
                             (con bytestring)
                           ]
                           (con integer)
@@ -243,7 +251,16 @@
                                   List
                                   [ [ Tuple2 (con bytestring) ] (con data) ]
                                 ]
-                                (fun (con bytestring) TxInfo))))))))))
+                                (fun (con bytestring) TxInfo)
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
             )
           )
         )
@@ -262,7 +279,8 @@
           (vardecl
             validateGuess
             (fun
-              (con bytestring) (fun (con bytestring) (fun ScriptContext Bool)))
+              (con bytestring) (fun (con bytestring) (fun ScriptContext Bool))
+            )
           )
           (lam
             hs

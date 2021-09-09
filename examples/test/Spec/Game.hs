@@ -22,10 +22,6 @@ import           Test.Tasty
 import qualified Test.Tasty.HUnit      as HUnit
 import Prelude
 
-w1, w2 :: Wallet
-w1 = Wallet 1
-w2 = Wallet 2
-
 t1, t2 :: ContractInstanceTag
 t1 = Trace.walletInstanceTag w1
 t2 = Trace.walletInstanceTag w2
