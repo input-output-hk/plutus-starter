@@ -36,24 +36,28 @@ module Plutus.Contracts.Game
     -- * Traces
     , guessTrace
     , lockTrace
+    , correctGuessTrace
     ) where
 
 import           Control.Monad         (void)
 import qualified Data.ByteString.Char8 as C
+import           Data.Map              (Map)
 import qualified Data.Map              as Map
 import           Data.Maybe            (catMaybes)
-import           Ledger                (Address, Datum (Datum), ScriptContext, TxOutTx, Validator, Value)
+import           Ledger                (Address, Datum (Datum), ScriptContext, Validator, Value)
 import qualified Ledger
 import qualified Ledger.Ada            as Ada
 import qualified Ledger.Constraints    as Constraints
+import           Ledger.Tx             (ChainIndexTxOut (..))
 import qualified Ledger.Typed.Scripts  as Scripts
 import           Playground.Contract
 import           Plutus.Contract
-import           Plutus.Trace.Emulator          (EmulatorTrace)
-import qualified Plutus.Trace.Emulator          as Trace
+import           Plutus.Contract.Trace as X
 import qualified PlutusTx
 import           PlutusTx.Prelude      hiding (pure, (<$>))
 import qualified Prelude               as Haskell
+import           Plutus.Trace.Emulator (EmulatorTrace)
+import qualified Plutus.Trace.Emulator as Trace
 
 newtype HashedString = HashedString BuiltinByteString deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
 
@@ -149,22 +153,20 @@ guess = endpoint @"guess" @GuessParams $ \(GuessParams theGuess) -> do
     void (submitTxConstraintsSpending gameInstance utxos tx)
 
 -- | Find the secret word in the Datum of the UTxOs
-findSecretWordValue :: UtxoMap -> Maybe HashedString
+findSecretWordValue :: Map TxOutRef ChainIndexTxOut -> Maybe HashedString
 findSecretWordValue =
   listToMaybe . catMaybes . Map.elems . Map.map secretWordValue
 
 -- | Extract the secret word in the Datum of a given transaction output is possible
-secretWordValue :: TxOutTx -> Maybe HashedString
+secretWordValue :: ChainIndexTxOut -> Maybe HashedString
 secretWordValue o = do
-  dh <- Ledger.txOutDatum $ Ledger.txOutTxOut o
-  Datum d <- Map.lookup dh $ Ledger.txData $ Ledger.txOutTxTx o
+  Datum d <- either (const Nothing) Just (_ciTxOutDatum o)
   PlutusTx.fromBuiltinData d
 
 game :: AsContractError e => Contract () GameSchema e ()
 game = do
     logInfo @Haskell.String "Waiting for guess or lock endpoint..."
     selectList [lock, guess] >> game
-
 
 lockTrace :: Wallet -> Haskell.String -> EmulatorTrace ()
 lockTrace wallet secretWord = do
@@ -179,3 +181,18 @@ guessTrace wallet guessWord = do
     void $ Trace.waitNSlots 1
     Trace.callEndpoint @"guess" hdl (GuessParams guessWord)
     void $ Trace.waitNSlots 1
+
+correctGuessTrace :: EmulatorTrace ()
+correctGuessTrace = do
+  let w1 = X.knownWallet 1
+      w2 = X.knownWallet 2
+      secret = "secret"
+
+  h1 <- Trace.activateContractWallet w1 (lock @ContractError)
+  void $ Trace.waitNSlots 1
+  Trace.callEndpoint @"lock" h1 (LockParams secret (Ada.adaValueOf 10))
+
+  h2 <- Trace.activateContractWallet w2 (guess @ContractError)
+  void $ Trace.waitNSlots 1
+  Trace.callEndpoint @"guess" h2 (GuessParams secret)
+  void $ Trace.waitNSlots 1

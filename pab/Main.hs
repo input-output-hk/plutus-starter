@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeFamilies       #-}
 {-# LANGUAGE TypeOperators      #-}
 
-module Main(main) where
+module Main(main, writeCostingScripts) where
 
 import           Control.Monad                       (void)
 import           Control.Monad.Freer                 (interpret)
@@ -25,6 +25,8 @@ import           Plutus.PAB.Simulator                (SimulatorEffectHandlers)
 import qualified Plutus.PAB.Simulator                as Simulator
 import qualified Plutus.PAB.Webserver.Server         as PAB.Server
 import           Plutus.Contracts.Game               as Game
+import           Plutus.Trace.Emulator.Extract       (writeScriptsTo, ScriptsConfig (..), Command (..))
+import           Ledger.Index                        (ValidatorMode(..))
 
 main :: IO ()
 main = void $ Simulator.runSimulationWith handlers $ do
@@ -46,6 +48,19 @@ main = void $ Simulator.runSimulationWith handlers $ do
     Simulator.logBalances @(Builtin StarterContracts) b
 
     shutdown
+
+-- | An example of computing the script size for a particular trace.
+-- Read more: <https://plutus.readthedocs.io/en/latest/plutus/howtos/analysing-scripts.html>
+writeCostingScripts :: IO ()
+writeCostingScripts = do
+  let config = ScriptsConfig { scPath = "/tmp/plutus-costing-outputs/", scCommand = cmd }
+      cmd    = Scripts { unappliedValidators = FullyAppliedValidators }
+      -- Note: Here you can use any trace you wish.
+      trace  = correctGuessTrace
+  (totalSize, exBudget) <- writeScriptsTo config "game" trace def
+  putStrLn $ "Total size = " <> show totalSize
+  putStrLn $ "ExBudget = " <> show exBudget
+
 
 data StarterContracts =
     GameContract
