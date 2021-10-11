@@ -274,41 +274,31 @@
             )
           )
         )
-        (termbind
-          (strict)
-          (vardecl
-            validateGuess
-            (fun
-              (con bytestring) (fun (con bytestring) (fun ScriptContext Bool))
-            )
-          )
+        (lam
+          hs
+          (con bytestring)
           (lam
-            hs
+            cs
             (con bytestring)
             (lam
-              cs
-              (con bytestring)
-              (lam
-                ds
-                ScriptContext
+              ds
+              ScriptContext
+              [
                 [
                   [
+                    { (builtin ifThenElse) Bool }
                     [
-                      { (builtin ifThenElse) Bool }
-                      [
-                        [ (builtin equalsByteString) hs ]
-                        [ (builtin sha2_256) cs ]
-                      ]
+                      [ (builtin equalsByteString) hs ]
+                      [ (builtin sha2_256) cs ]
                     ]
-                    True
                   ]
-                  False
+                  True
                 ]
-              )
+                False
+              ]
             )
           )
         )
-        validateGuess
       )
     )
   )
