@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds          #-}
+{-# LANGUAGE DeriveAnyClass     #-}
 {-# LANGUAGE DeriveGeneric      #-}
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts   #-}
@@ -16,6 +17,7 @@ import           Control.Monad.IO.Class              (MonadIO (..))
 import           Data.Aeson                          (FromJSON (..), ToJSON (..), genericToJSON, genericParseJSON
                                                      , defaultOptions, Options(..))
 import           Data.Default                        (def)
+import qualified Data.OpenApi                        as OpenApi
 import           Data.Text.Prettyprint.Doc           (Pretty (..), viaShow)
 import           GHC.Generics                        (Generic)
 import           Plutus.Contract                     (ContractError)
@@ -65,6 +67,7 @@ writeCostingScripts = do
 data StarterContracts =
     GameContract
     deriving (Eq, Ord, Show, Generic)
+    deriving anyclass OpenApi.ToSchema
 
 -- NOTE: Because 'StarterContracts' only has one constructor, corresponding to
 -- the demo 'Game' contract, we kindly ask aeson to still encode it as if it had
@@ -94,4 +97,5 @@ handlers :: SimulatorEffectHandlers (Builtin StarterContracts)
 handlers =
     Simulator.mkSimulatorHandlers def def
     $ interpret (contractHandler Builtin.handleBuiltin)
+
 

@@ -53,7 +53,7 @@ library
       plutus-contract,
       plutus-tx-plugin,
       plutus-tx,
-      plutus-ledger
+      plutus-ledger,
     hs-source-dirs: src examples/src
 
 test-suite plutus-example-projects-test
@@ -91,4 +91,6 @@ executable plutus-starter-pab
     freer-simple -any,
     prettyprinter -any,
     freer-extras -any,
-    plutus-ledger -any
+    plutus-ledger -any,
+    openapi3 -any,
+
