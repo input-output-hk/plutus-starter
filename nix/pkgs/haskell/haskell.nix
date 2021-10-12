@@ -19,7 +19,7 @@ let
     inherit compiler-nix-name;
 
     sha256map = {
-      "https://github.com/input-output-hk/plutus.git"."plutus-starter-devcontainer/v1.0.10" = "12mr2p21igzslflr794vh5jhgl5vynrfli09gpjsv0x3g44wq18l";
+      "https://github.com/input-output-hk/plutus.git"."plutus-starter-devcontainer/v1.0.10" = "06c3jhsbjmzqv951yi1spq1jihija48vss2b8gx9b1fqnz50dbnm";
       "https://github.com/Quid2/flat.git"."ee59880f47ab835dbd73bea0847dab7869fc20d8" = "1lrzknw765pz2j97nvv9ip3l1mcpf2zr4n56hwlz0rk7wq7ls4cm";
       "https://github.com/input-output-hk/purescript-bridge.git"."6a92d7853ea514be8b70bab5e72077bf5a510596" = "13j64vv116in3c204qsl1v0ajphac9fqvsjp7x3zzfr7n7g61drb";
       "https://github.com/input-output-hk/servant-purescript.git"."a0c7c7e37c95564061247461aef4be505a853538" = "177na04jf6wf18kandzsah40lw3xswmmccpr3hkb8wb4hypcffnf";
