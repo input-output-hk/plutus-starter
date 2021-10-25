@@ -57,7 +57,7 @@ See [here](https://github.com/haskell/haskell-language-server#configuring-your-e
 ## The Plutus Application Backend (PAB) example
 
 We have provided an example PAB application in `./pab`. With the PAB we can serve and interact
-with contracts over a web API. You can read more about the PAB here: [PAB Architecture](https://github.com/input-output-hk/plutus/blob/master/plutus-pab/ARCHITECTURE.adoc).
+with contracts over a web API. You can read more about the PAB here: [PAB Architecture](https://github.com/input-output-hk/plutus-apps/blob/main/plutus-pab/ARCHITECTURE.adoc).
 
 Here, the PAB is configured with one contract, the `Game` contract from `./examples/src/Plutus/Contracts/Game.hs`.
 
@@ -187,7 +187,7 @@ Note that you can verify the balances by looking at the log of `plutus-starter-p
 when exiting it by pressing return.
 
 Finally, also node that the PAB also exposes a websocket, which you can read about in
-the general [PAB Architecture documentation](https://github.com/input-output-hk/plutus/blob/master/plutus-pab/ARCHITECTURE.adoc).
+the general [PAB Architecture documentation](https://github.com/input-output-hk/plutus-apps/blob/main/plutus-pab/ARCHITECTURE.adoc).
 
 
 ## Support/Issues/Community
