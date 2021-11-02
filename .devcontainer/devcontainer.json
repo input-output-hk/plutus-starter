@@ -1,6 +1,6 @@
 {
     "name": "Plutus Starter Project",
-    "image": "docker.io/inputoutput/plutus-starter-devcontainer:v1.0.10",
+    "image": "docker.io/inputoutput/plutus-starter-devcontainer:v1.0.14",
 
     "remoteUser": "plutus",
 
@@ -15,7 +15,7 @@
         // Note: don't change from bash so it runs .bashrc
         "terminal.integrated.shell.linux": "/bin/bash"
     },
-    
+
     // IDs of extensions inside container
     "extensions": [
         "haskell.haskell"
