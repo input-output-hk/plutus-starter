@@ -1,7 +1,7 @@
 {
     "plutus-apps": {
         "branch": "master",
-        "description": "The Plutus language implementation and tools",
+        "description": "The Plutus application platform",
         "homepage": "",
         "owner": "input-output-hk",
         "repo": "plutus-apps",
