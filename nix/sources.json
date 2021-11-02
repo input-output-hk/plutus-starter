@@ -8,7 +8,7 @@
         "rev": "plutus-starter-devcontainer/v1.0.14",
         "sha256": "0j3hphj4b21vwdj900233d67qsaj91mppwsx1vv0ichnmnw2bmir",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/plutus/archive/plutus-starter-devcontainer/v1.0.14.tar.gz",
+        "url": "https://github.com/input-output-hk/plutus-apps/archive/plutus-starter-devcontainer/v1.0.14.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
