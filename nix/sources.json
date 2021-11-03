@@ -1,14 +1,14 @@
 {
-    "plutus": {
+    "plutus-apps": {
         "branch": "master",
-        "description": "The Plutus language implementation and tools",
+        "description": "The Plutus application platform",
         "homepage": "",
         "owner": "input-output-hk",
-        "repo": "plutus",
-        "rev": "plutus-starter-devcontainer/v1.0.10",
-        "sha256": "06c3jhsbjmzqv951yi1spq1jihija48vss2b8gx9b1fqnz50dbnm",
+        "repo": "plutus-apps",
+        "rev": "plutus-starter-devcontainer/v1.0.14",
+        "sha256": "0j3hphj4b21vwdj900233d67qsaj91mppwsx1vv0ichnmnw2bmir",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/plutus/archive/plutus-starter-devcontainer/v1.0.10.tar.gz",
+        "url": "https://github.com/input-output-hk/plutus-apps/archive/plutus-starter-devcontainer/v1.0.14.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
