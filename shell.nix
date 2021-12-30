@@ -1,3 +1,4 @@
+{ pure ? false }:
 let
   packages = import ./.;
   inherit (packages) pkgs plutus-starter;
@@ -17,5 +18,10 @@ in
       pkgs.ghcid
       # HACK: This shouldn't need to be here.
       pkgs.lzma.dev
-    ];
+    ] ++ (pkgs.lib.optionals pure [
+      pkgs.git
+      pkgs.cacert
+      pkgs.curl
+      pkgs.jq
+    ]);
   }
