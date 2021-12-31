@@ -43,7 +43,9 @@ let
     dimension "Haskell component" attrs select;
 
   ciJobsets = stripAttrsForHydra (filterDerivations {
-    shell = (import ./shell.nix);
+    shell = (import ./shell.nix {});
+
+    pureShell = (import ./shell.nix { pure = true; });
 
     build = pkgs.recurseIntoAttrs (mkHaskellDimension pkgs projectPackages);
   });

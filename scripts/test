@@ -1,0 +1,84 @@
+#! /usr/bin/env nix-shell
+# -*-Shell-script-*-
+#! nix-shell -i bash ../shell.nix --pure --arg pure true
+
+set -eEuo pipefail
+
+cabal update
+
+cabal build plutus-starter-pab
+
+# We run plutus-starter-pab under a coproc to enable backgrounding when in an interactive shell
+coproc cabal exec -- plutus-starter-pab
+kill_pab() {
+    echo >&${COPROC[1]}
+
+    wait
+}
+trap kill_pab EXIT
+
+# Start a background loop to print out the output from plutus-starter-pab
+exec 3<&${COPROC[0]}
+(while IFS= read -u 3 -r line; do echo $line; done) &
+
+wait_with_backoff() {
+    cmd="$1"
+    msg="$2"
+    final_cmd="${3:-$cmd}"
+    up=0
+    for ((i=0;i<=6;i++))
+    do
+        if eval "$cmd"
+        then
+            up=1
+            break
+        fi
+        let delay=2**i
+        echo "$msg, sleeping for ${delay} seconds then trying again" >&2
+        sleep "${delay}"
+    done
+    if [[ "$up" == "0" ]]
+    then
+        eval "$final_cmd"
+    fi
+}
+
+wait_with_backoff "curl --fail http://localhost:9080/api/contract/definitions &>/dev/null" "Connecting to PAB failed" "curl --fail http://localhost:9080/api/contract/definitions"
+
+play() {
+    secret="$1"
+    guess="$2"
+
+    WALLET_ID=$(curl --silent --fail --data '' http://localhost:9080/wallet/create | jq -r '.wiWallet.getWalletId')
+    wait_with_backoff '[[ $(curl --fail --silent http://localhost:9080/wallet/$WALLET_ID/total-funds | jq '\''.getValue|length'\'') != "0" ]]' "Wallet not populated"
+
+    CONTRACT_ID=$(curl --fail --silent \
+                       --header "Content-Type: application/json" \
+                       --data '{"caID": "GameContract", "caWallet":{"getWalletId": "'$WALLET_ID'"}}' \
+                       http://localhost:9080/api/contract/activate | jq -r '.unContractInstanceId')
+
+    log_count=0
+    wait_for_contract() {
+	wait_with_backoff 'curl --fail --silent http://localhost:9080/api/contract/instance/'$CONTRACT_ID'/status > status.json && [[ "$(jq -r '\''.cicCurrentState.logs | length'\'' < status.json)" -gt "'$log_count'" && ("$(jq -r .cicCurrentState.lastLogs[0]._logMessageContent < status.json)" == "Waiting for guess or lock endpoint..." || "$(jq -r .cicStatus < status.json)" == "Done") ]]' "Contract not ready"
+	log_count="$(jq -r '.cicCUrrentState.logs | length' <status.json)"
+    }
+
+    wait_for_contract
+
+    curl --fail --silent --header "Content-Type: application/json" \
+	 --data '{"amount":{"getValue":[[{"unCurrencySymbol":""},[[{"unTokenName":""},90]]]]},"secretWord":"'"$secret"'"}' \
+	 http://localhost:9080/api/contract/instance/$CONTRACT_ID/endpoint/lock
+    wait_for_contract
+
+    curl --fail -s -H "Content-Type: application/json" \
+	 --request POST \
+	 --data '{"guessWord": "'"$guess"'"}' \
+	 http://localhost:9080/api/contract/instance/$CONTRACT_ID/endpoint/guess
+    wait_for_contract
+
+    jq -r < status.json
+}
+
+play "eagle" "duck"
+
+play "lion" "lion"
