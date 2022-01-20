@@ -6,6 +6,7 @@
 , compiler-nix-name
 , lib
 , libsodium-vrf
+, source-repo-override
 }:
 
 let
@@ -17,6 +18,8 @@ let
     };
 
     inherit compiler-nix-name;
+
+    # If using materialization, be sure to disable it when source-repo-override is set or it won't take effect.
 
     sha256map = {
       "https://github.com/input-output-hk/plutus-apps.git"."plutus-starter-devcontainer/v1.0.14" = "0j3hphj4b21vwdj900233d67qsaj91mppwsx1vv0ichnmnw2bmir";
@@ -52,6 +55,8 @@ let
         };
       }
     ];
+
+    inherit source-repo-override;
   };
 in
   project

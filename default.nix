@@ -1,3 +1,4 @@
+{ source-repo-override ? { } }:
 ########################################################################
 # default.nix -- The top-level nix build file for plutus-starter.
 #
@@ -22,7 +23,7 @@ let
   #     haskell-language-server
   #   }
   # }
-  packages = import ./nix;
+  packages = import ./nix { inherit source-repo-override; };
 
   inherit (packages) pkgs plutus-starter;
   project = plutus-starter.haskell.project;

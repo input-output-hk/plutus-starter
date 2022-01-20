@@ -1,6 +1,6 @@
-{ pure ? false }:
+{ pure ? false, source-repo-override ? { } }:
 let
-  packages = import ./.;
+  packages = import ./. { inherit source-repo-override; };
   inherit (packages) pkgs plutus-starter;
   inherit (plutus-starter) haskell;
 
