@@ -194,9 +194,7 @@ the general [PAB Architecture documentation](https://github.com/input-output-hk/
 
 ## Support/Issues/Community
 
-If you're looking for support, or would simply like to report a bug, feature
-request, etc please do so over on the main [plutus
-repository](https://github.com/input-output-hk/plutus).
+Issues can be filed in the [GitHub Issue tracker](https://github.com/input-output-hk/plutus-starter/issues).
 
 For more interactive discussion, you can join the [IOG Technical Community
 Discord](https://discord.gg/sSF5gmDBYg).
