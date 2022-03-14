@@ -51,9 +51,10 @@ library
       freer-extras,
       playground-common,
       plutus-contract,
-      plutus-tx-plugin,
-      plutus-tx,
       plutus-ledger,
+      plutus-ledger-constraints,
+      plutus-tx,
+      plutus-tx-plugin,
     hs-source-dirs: src examples/src
 
 test-suite plutus-example-projects-test
