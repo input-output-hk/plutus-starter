@@ -1,4 +1,4 @@
-cabal-version:      2.4
+cabal-version:      3.0
 name:               plutus-starter
 version:            0.1.0.0
 
@@ -45,15 +45,19 @@ library
       Plutus.Contracts.Game
     build-depends:
       base >= 4.9 && < 5,
-      aeson,
-      bytestring,
-      containers,
-      freer-extras,
-      playground-common,
-      plutus-contract,
-      plutus-tx-plugin,
-      plutus-tx,
-      plutus-ledger,
+      aeson -any,
+      bytestring -any,
+      containers -any,
+      freer-extras -any,
+      playground-common -any,
+      plutus-contract -any,
+      plutus-ledger -any,
+      plutus-ledger-api -any,
+      plutus-ledger-constraints -any,
+      plutus-tx -any,
+      plutus-tx-plugin -any,
+      text -any,
+      lens -any,
     hs-source-dirs: src examples/src
 
 test-suite plutus-example-projects-test
@@ -67,13 +71,16 @@ test-suite plutus-example-projects-test
     plutus-tx -any,
     plutus-tx-plugin,
     plutus-contract -any,
+    plutus-pab -any,
     plutus-ledger -any,
     plutus-starter -any
   build-depends:
     base >=4.9 && <5,
     tasty -any,
     tasty-hunit -any,
+    text -any,
     tasty-hedgehog >=0.2.0.0
+    
 
 executable plutus-starter-pab
   import: lang
@@ -93,4 +100,3 @@ executable plutus-starter-pab
     freer-extras -any,
     plutus-ledger -any,
     openapi3 -any,
-

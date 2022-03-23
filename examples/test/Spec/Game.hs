@@ -11,7 +11,7 @@ module Spec.Game
 import           Control.Monad         (void)
 import           Ledger                (ValidationError(ScriptFailure))
 import qualified Ledger.Ada            as Ada
-import           Plutus.Contract       (Contract, ContractError(WalletError))
+import           Plutus.Contract       (Contract, ContractError(WalletContractError))
 import           Wallet.API            (WalletAPIError(ValidationError))
 import           Plutus.Contract.Test
 import           Plutus.Contracts.Game
@@ -72,5 +72,5 @@ tests = testGroup "game"
 
 appropriateError :: ContractError -> Bool
 appropriateError e = case e of
-    WalletError (ValidationError (ScriptFailure _)) -> True
+    WalletContractError (ValidationError (ScriptFailure _)) -> True
     _ -> False
