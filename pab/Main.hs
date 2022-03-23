@@ -95,7 +95,6 @@ instance Builtin.HasDefinitions StarterContracts where
 
 handlers :: SimulatorEffectHandlers (Builtin StarterContracts)
 handlers =
-    Simulator.mkSimulatorHandlers def def
+    Simulator.mkSimulatorHandlers def
     $ interpret (contractHandler Builtin.handleBuiltin)
-
 
