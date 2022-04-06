@@ -22,7 +22,7 @@ let
     # If using materialization, be sure to disable it when source-repo-override is set or it won't take effect.
 
     sha256map = {
-      "https://github.com/input-output-hk/plutus-apps.git"."c9f2601e342a2fc0e2b5870ce656ef434b0efa32" = "sha256-GIL9uHQwlyD4qEpwUGlhN9o9blwhElmlKPOPjC3n714=";
+      "https://github.com/input-output-hk/plutus-apps.git"."v2022-04-06" = "13yg3vb6a6gmjawlfa3wam5c6krqm7lip4w1p0j30hflca23x2h2";
       "https://github.com/input-output-hk/ekg-forward"."297cd9db5074339a2fb2e5ae7d0780debb670c63" = "1zcwry3y5rmd9lgxy89wsb3k4kpffqji35dc7ghzbz603y1gy24g";
       "https://github.com/input-output-hk/cardano-addresses"."71006f9eb956b0004022e80aadd4ad50d837b621" = "11dl3fmq7ry5wdmz8kw07ji8yvrxnrsf7pgilw5q9mi4aqyvnaqk";
       "https://github.com/input-output-hk/cardano-base"."41545ba3ac6b3095966316a99883d678b5ab8da8" = "0icq9y3nnl42fz536da84414av36g37894qnyw4rk3qkalksqwir";
@@ -40,7 +40,6 @@ let
       "https://github.com/input-output-hk/servant-purescript"."44e7cacf109f84984cd99cd3faf185d161826963" = "10pb0yfp80jhb9ryn65a4rha2lxzsn2vlhcc6xphrrkf4x5lhzqc";
       "https://github.com/input-output-hk/Win32-network"."3825d3abf75f83f406c1f7161883c438dac7277d" = "19wahfv726fa3mqajpqdqhnl9ica3xmf68i254q45iyjcpj1psqx";
       "https://github.com/Quid2/flat"."ee59880f47ab835dbd73bea0847dab7869fc20d8" = "1lrzknw765pz2j97nvv9ip3l1mcpf2zr4n56hwlz0rk7wq7ls4cm";
-      "https://github.com/blockfrost/blockfrost-haskell"."edfd43a95a21356b0cc540002bd1583a35883f85" = "sha256-dOanQuBE/uNpcJTNtuCirGgG4JYtaxOVKjh4tjX8WUI=";
     };
 
     modules = [

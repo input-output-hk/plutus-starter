@@ -18,7 +18,6 @@ import           Data.Aeson                          (FromJSON (..), ToJSON (..)
                                                      , defaultOptions, Options(..))
 import           Data.Default                        (def)
 import qualified Data.OpenApi                        as OpenApi
-import           Data.Text.Prettyprint.Doc           (Pretty (..), viaShow)
 import           GHC.Generics                        (Generic)
 import           Plutus.Contract                     (ContractError)
 import           Plutus.PAB.Effects.Contract.Builtin (Builtin, SomeBuiltin (..), BuiltinHandler(contractHandler))
@@ -28,6 +27,7 @@ import qualified Plutus.PAB.Simulator                as Simulator
 import qualified Plutus.PAB.Webserver.Server         as PAB.Server
 import           Plutus.Contracts.Game               as Game
 import           Plutus.Trace.Emulator.Extract       (writeScriptsTo, ScriptsConfig (..), Command (..))
+import           Prettyprinter                       (Pretty (..), viaShow)
 import           Ledger.Index                        (ValidatorMode(..))
 
 main :: IO ()

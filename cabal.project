@@ -1,4 +1,4 @@
-index-state: 2022-01-22T00:00:00Z
+index-state: 2022-02-22T20:47:03Z
 
 packages: ./.
 
@@ -9,7 +9,7 @@ write-ghc-environment-files: never
 tests: true
 benchmarks: true
 
--- Plutus apps revision from 2022/03/10
+-- Plutus apps revision from 2022-04-06
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/plutus-apps.git
@@ -21,6 +21,7 @@ source-repository-package
     plutus-chain-index-core
     plutus-contract
     plutus-example
+    plutus-contract-certification
     plutus-ledger
     plutus-ledger-constraints
     plutus-pab
@@ -29,7 +30,7 @@ source-repository-package
     plutus-use-cases
     quickcheck-dynamic
     web-ghc
-  tag: c9f2601e342a2fc0e2b5870ce656ef434b0efa32
+  tag: v2022-04-06
 
 
 -- The following sections are copied from the 'plutus-apps' repository cabal.project at the revision
@@ -50,6 +51,13 @@ test-show-details: streaming
 
 allow-newer:
            size-based:template-haskell
+
+constraints:
+     -- Because later versions of hedgehog introduce a change which break 'cardano-ledger':
+     -- Test/Cardano/Chain/Delegation/Model.hs:91:41: error:
+     --   • Could not deduce (TraversableB SignalSDELEG)
+     -- TODO: Try to remove on next `cardano-node` version upgrade.
+     hedgehog >= 1.0.2 && < 1.1
 
 -- These packages appear in our dependency tree and are very slow to build.
 -- Empirically, turning off optimization shaves off ~50% build time.
@@ -293,13 +301,3 @@ source-repository-package
   type: git
   location: https://github.com/input-output-hk/Win32-network
   tag: 3825d3abf75f83f406c1f7161883c438dac7277d
-  
-source-repository-package
-  type: git
-  location: https://github.com/blockfrost/blockfrost-haskell
-  tag: edfd43a95a21356b0cc540002bd1583a35883f85
-  subdir:
-    blockfrost-api
-    blockfrost-client-core
-    blockfrost-client
-    blockfrost-pretty
