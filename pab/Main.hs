@@ -29,11 +29,17 @@ import           Plutus.Contracts.Game               as Game
 import           Plutus.Trace.Emulator.Extract       (writeScriptsTo, ScriptsConfig (..), Command (..))
 import           Prettyprinter                       (Pretty (..), viaShow)
 import           Ledger.Index                        (ValidatorMode(..))
+import qualified Wallet.Emulator.Wallet as Wallet
 
 main :: IO ()
 main = void $ Simulator.runSimulationWith handlers $ do
-    Simulator.logString @(Builtin StarterContracts) "Starting plutus-starter PAB webserver on port 8080. Press enter to exit."
+    Simulator.logString @(Builtin StarterContracts) "Starting plutus-starter PAB webserver on port 9080. Press enter to exit."
+
+    (wallet, _paymentPubKeyHash) <- Simulator.addWallet
+    liftIO $ writeFile "scripts/wallet" (show $ Wallet.getWalletId wallet)
+
     shutdown <- PAB.Server.startServerDebug
+
     -- Example of spinning up a game instance on startup
     -- void $ Simulator.activateContract (Wallet 1) GameContract
     -- You can add simulator actions here:
