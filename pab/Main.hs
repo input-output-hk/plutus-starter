@@ -36,6 +36,7 @@ main = void $ Simulator.runSimulationWith handlers $ do
     Simulator.logString @(Builtin StarterContracts) "Starting plutus-starter PAB webserver on port 9080. Press enter to exit."
 
     (wallet, _paymentPubKeyHash) <- Simulator.addWallet
+    Simulator.waitNSlots 1
     liftIO $ writeFile "scripts/wallet" (show $ Wallet.getWalletId wallet)
 
     shutdown <- PAB.Server.startServerDebug

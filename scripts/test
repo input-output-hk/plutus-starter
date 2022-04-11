@@ -64,7 +64,7 @@ play() {
     wait_for_contract
 
     curl --fail --silent --header "Content-Type: application/json" \
-	 --data '{"amount":{"getValue":[[{"unCurrencySymbol":""},[[{"unTokenName":""},90]]]]},"secretWord":"'"$secret"'"}' \
+	 --data '{"amount":{"getValue":[[{"unCurrencySymbol":""},[[{"unTokenName":""},2000000]]]]},"secretWord":"'"$secret"'"}' \
 	 http://localhost:9080/api/contract/instance/$CONTRACT_ID/endpoint/lock
     wait_for_contract
 
