@@ -49,9 +49,7 @@ play() {
     secret="$1"
     guess="$2"
 
-    WALLET_ID=$(curl --silent --fail --data '' http://localhost:9080/wallet/create | jq -r '.wiWallet.getWalletId')
-    wait_with_backoff '[[ $(curl --fail --silent http://localhost:9080/wallet/$WALLET_ID/total-funds | jq '\''.getValue|length'\'') != "0" ]]' "Wallet not populated"
-
+    WALLET_ID=$(cat scripts/wallet)
     CONTRACT_ID=$(curl --fail --silent \
                        --header "Content-Type: application/json" \
                        --data '{"caID": "GameContract", "caWallet":{"getWalletId": "'$WALLET_ID'"}}' \
@@ -66,7 +64,7 @@ play() {
     wait_for_contract
 
     curl --fail --silent --header "Content-Type: application/json" \
-	 --data '{"amount":{"getValue":[[{"unCurrencySymbol":""},[[{"unTokenName":""},90]]]]},"secretWord":"'"$secret"'"}' \
+	 --data '{"amount":{"getValue":[[{"unCurrencySymbol":""},[[{"unTokenName":""},2000000]]]]},"secretWord":"'"$secret"'"}' \
 	 http://localhost:9080/api/contract/instance/$CONTRACT_ID/endpoint/lock
     wait_for_contract
 

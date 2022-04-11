@@ -24,3 +24,5 @@ cabal.project.local~
 result*
 .envrc
 .vim
+scripts/wallet
+status.json

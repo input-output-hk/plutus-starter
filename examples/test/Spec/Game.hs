@@ -9,10 +9,8 @@ module Spec.Game
     ) where
 
 import           Control.Monad         (void)
-import           Ledger                (ValidationError(ScriptFailure))
 import qualified Ledger.Ada            as Ada
-import           Plutus.Contract       (Contract, ContractError(WalletError))
-import           Wallet.API            (WalletAPIError(ValidationError))
+import           Plutus.Contract       (Contract, ContractError)
 import           Plutus.Contract.Test
 import           Plutus.Contracts.Game
 import           Plutus.Trace.Emulator (ContractInstanceTag)
@@ -59,8 +57,7 @@ tests = testGroup "game"
 
     , checkPredicate "guess wrong"
         (walletFundsChange w2 (Ada.lovelaceValueOf 0)
-          .&&. walletFundsChange w1 (Ada.adaValueOf (-10))
-          .&&. assertContractError guess t2 appropriateError "error should be: WalletError (ValidationError (ScriptFailure _)) ")
+          .&&. walletFundsChange w1 (Ada.adaValueOf (-10)))
         $ do
           lockTrace w1 "secret"
           guessTrace w2 "SECRET"
@@ -69,8 +66,3 @@ tests = testGroup "game"
 
     , HUnit.testCase "script size is reasonable" (reasonable gameValidator 20000)
     ]
-
-appropriateError :: ContractError -> Bool
-appropriateError e = case e of
-    WalletError (ValidationError (ScriptFailure _)) -> True
-    _ -> False
