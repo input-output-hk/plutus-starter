@@ -9,10 +9,8 @@ module Spec.Game
     ) where
 
 import           Control.Monad         (void)
-import           Ledger                (ValidationError(ScriptFailure))
 import qualified Ledger.Ada            as Ada
-import           Plutus.Contract       (Contract, ContractError(WalletContractError))
-import           Wallet.API            (WalletAPIError(ValidationError))
+import           Plutus.Contract       (Contract, ContractError)
 import           Plutus.Contract.Test
 import           Plutus.Contracts.Game
 import           Plutus.Trace.Emulator (ContractInstanceTag)
