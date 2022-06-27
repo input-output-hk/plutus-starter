@@ -1,11 +1,10 @@
 { pure ? false, source-repo-override ? { } }:
 let
   packages = import ./. { inherit source-repo-override; };
-  inherit (packages) pkgs plutus-starter;
-  inherit (plutus-starter) haskell;
+  inherit (packages) pkgs plutus-starter project;
 
 in
-  haskell.project.shellFor {
+  project.shellFor {
     withHoogle = false;
 
     nativeBuildInputs = with plutus-starter; [
