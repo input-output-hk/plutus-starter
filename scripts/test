@@ -58,7 +58,7 @@ play() {
     log_count=0
     wait_for_contract() {
 	wait_with_backoff 'curl --fail --silent http://localhost:9080/api/contract/instance/'$CONTRACT_ID'/status > status.json && [[ "$(jq -r '\''.cicCurrentState.logs | length'\'' < status.json)" -gt "'$log_count'" && ("$(jq -r .cicCurrentState.lastLogs[0]._logMessageContent < status.json)" == "Waiting for guess or lock endpoint..." || "$(jq -r .cicStatus < status.json)" == "Done") ]]' "Contract not ready"
-	log_count="$(jq -r '.cicCUrrentState.logs | length' <status.json)"
+	log_count="$(jq -r '.cicCurrentState.logs | length' <status.json)"
     }
 
     wait_for_contract
