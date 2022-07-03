@@ -23,7 +23,7 @@ Use the provided VSCode devcontainer to get an environment with the correct tool
 
 Note: This uses the [plutus-starter-devcontainer image on dockerhub](https://hub.docker.com/r/inputoutput/plutus-starter-devcontainer), if
 you wish to build the image yourself, you can do so as follows:
-  - Clone https://github.com/input-output-hk/plutus,
+  - Clone https://github.com/input-output-hk/plutus-apps,
   - Set up your machine to build things with Nix, following the [Plutus README](https://github.com/input-output-hk/plutus/blob/master/README.adoc) (make sure to set up the binary cache!),
   - Build and load the docker container: `docker load < $(nix-build default.nix -A devcontainer)`,
   - Adjust the `.devcontainer/devcontainer.json` file to point to your local image.
