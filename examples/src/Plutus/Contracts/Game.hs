@@ -45,11 +45,11 @@ import           Data.Map              (Map)
 import qualified Data.Map              as Map
 import           Data.Maybe            (catMaybes)
 import           Ledger                (Address, Datum (Datum), ScriptContext, Validator, Value)
-import qualified Ledger
 import qualified Ledger.Ada            as Ada
 import qualified Ledger.Constraints    as Constraints
 import           Ledger.Tx             (ChainIndexTxOut (..))
 import qualified Ledger.Typed.Scripts  as Scripts
+import Plutus.Script.Utils.V1.Address (mkValidatorAddress)
 import           Playground.Contract
 import           Plutus.Contract
 import           Plutus.Contract.Trace as X
@@ -80,7 +80,7 @@ gameInstance :: Scripts.TypedValidator Game
 gameInstance = Scripts.mkTypedValidator @Game
     $$(PlutusTx.compile [|| validateGuess ||])
     $$(PlutusTx.compile [|| wrap ||]) where
-        wrap = Scripts.wrapValidator @HashedString @ClearString
+        wrap = Scripts.mkUntypedValidator @HashedString @ClearString
 
 -- create a data script for the guessing game by hashing the string
 -- and lifting the hash to its on-chain representation
@@ -105,7 +105,7 @@ gameValidator = Scripts.validatorScript gameInstance
 
 -- | The address of the game (the hash of its validator script)
 gameAddress :: Address
-gameAddress = Ledger.scriptAddress gameValidator
+gameAddress = mkValidatorAddress gameValidator
 
 -- | Parameters for the "lock" endpoint
 data LockParams = LockParams
