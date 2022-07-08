@@ -32,7 +32,7 @@ common lang
     ghc-options:
       -Wall -Wnoncanonical-monad-instances
       -Wincomplete-uni-patterns -Wincomplete-record-updates
-      -Wredundant-constraints -Widentities -rtsopts
+      -Wredundant-constraints -Widentities
       -- See Plutus Tx readme
       -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
     if flag(defer-plugin-errors)
@@ -54,6 +54,7 @@ library
       plutus-ledger -any,
       plutus-ledger-api -any,
       plutus-ledger-constraints -any,
+      plutus-script-utils,
       plutus-tx -any,
       plutus-tx-plugin -any,
       text -any,
@@ -73,14 +74,14 @@ test-suite plutus-example-projects-test
     plutus-contract -any,
     plutus-pab -any,
     plutus-ledger -any,
-    plutus-starter -any
+    plutus-starter -any,
   build-depends:
     base >=4.9 && <5,
     tasty -any,
     tasty-hunit -any,
     text -any,
     tasty-hedgehog >=0.2.0.0
-    
+
 
 executable plutus-starter-pab
   import: lang
