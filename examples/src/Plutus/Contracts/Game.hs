@@ -44,12 +44,11 @@ import qualified Data.ByteString.Char8 as C
 import           Data.Map              (Map)
 import qualified Data.Map              as Map
 import           Data.Maybe            (catMaybes)
-import           Ledger                (Address, Datum (Datum), ScriptContext, Validator, Value)
+import           Plutus.V1.Ledger.Api  (Address, ScriptContext, Validator, Value, Datum(Datum))
 import qualified Ledger
 import qualified Ledger.Ada            as Ada
 import qualified Ledger.Constraints    as Constraints
 import           Ledger.Tx             (ChainIndexTxOut (..))
-import qualified Ledger.Typed.Scripts  as Scripts
 import           Playground.Contract
 import           Plutus.Contract
 import           Plutus.Contract.Trace as X
@@ -58,6 +57,7 @@ import           PlutusTx.Prelude      hiding (pure, (<$>))
 import qualified Prelude               as Haskell
 import           Plutus.Trace.Emulator (EmulatorTrace)
 import qualified Plutus.Trace.Emulator as Trace
+import qualified Plutus.Script.Utils.V1.Typed.Scripts as Scripts
 
 newtype HashedString = HashedString BuiltinByteString deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
 
@@ -80,7 +80,7 @@ gameInstance :: Scripts.TypedValidator Game
 gameInstance = Scripts.mkTypedValidator @Game
     $$(PlutusTx.compile [|| validateGuess ||])
     $$(PlutusTx.compile [|| wrap ||]) where
-        wrap = Scripts.wrapValidator @HashedString @ClearString
+        wrap = Scripts.mkUntypedValidator @HashedString @ClearString
 
 -- create a data script for the guessing game by hashing the string
 -- and lifting the hash to its on-chain representation
