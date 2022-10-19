@@ -15,7 +15,6 @@
 {-# LANGUAGE TypeApplications           #-}
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
-{-# LANGUAGE ViewPatterns               #-}
 
 
 -- | A guessing game
@@ -39,25 +38,29 @@ module Plutus.Contracts.Game
     , correctGuessTrace
     ) where
 
-import           Control.Monad         (void)
-import qualified Data.ByteString.Char8 as C
-import           Data.Map              (Map)
-import qualified Data.Map              as Map
-import           Data.Maybe            (catMaybes)
-import           Plutus.V1.Ledger.Api  (Address, ScriptContext, Validator, Value, Datum(Datum))
+import           Control.Monad                        (void)
+import qualified Data.ByteString.Char8                as C
+import           Data.Map                             (Map)
+import qualified Data.Map                             as Map
+import           Data.Maybe                           (catMaybes)
 import qualified Ledger
-import qualified Ledger.Ada            as Ada
-import qualified Ledger.Constraints    as Constraints
-import           Ledger.Tx             (ChainIndexTxOut (..))
+import qualified Ledger.Ada                           as Ada
+import qualified Ledger.Constraints                   as Constraints
+import           Ledger.Tx                            (ChainIndexTxOut (..))
 import           Playground.Contract
 import           Plutus.Contract
-import           Plutus.Contract.Trace as X
-import qualified PlutusTx
-import           PlutusTx.Prelude      hiding (pure, (<$>))
-import qualified Prelude               as Haskell
-import           Plutus.Trace.Emulator (EmulatorTrace)
-import qualified Plutus.Trace.Emulator as Trace
+import           Plutus.Contract.Trace                as X
+import           Plutus.Script.Utils.V1.Address       (mkValidatorAddress)
 import qualified Plutus.Script.Utils.V1.Typed.Scripts as Scripts
+import           Plutus.Trace.Emulator                (EmulatorTrace)
+import qualified Plutus.Trace.Emulator                as Trace
+import           Plutus.V1.Ledger.Api                 (Address, Datum (Datum),
+                                                       ScriptContext, Validator,
+                                                       Value)
+import qualified PlutusTx
+import           PlutusTx.Prelude                     hiding (pure, (<$>))
+import qualified Prelude                              as Haskell
+
 
 newtype HashedString = HashedString BuiltinByteString deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
 
@@ -105,7 +108,7 @@ gameValidator = Scripts.validatorScript gameInstance
 
 -- | The address of the game (the hash of its validator script)
 gameAddress :: Address
-gameAddress = Ledger.scriptAddress gameValidator
+gameAddress = mkValidatorAddress gameValidator
 
 -- | Parameters for the "lock" endpoint
 data LockParams = LockParams
@@ -137,7 +140,7 @@ guess = endpoint @"guess" @GuessParams $ \(GuessParams theGuess) -> do
     utxos <- fundsAtAddressGeq gameAddress (Ada.lovelaceValueOf 1)
 
     let redeemer = clearString theGuess
-        tx       = collectFromScript utxos redeemer
+        tx       = Constraints.collectFromTheScript utxos redeemer
 
     -- Log a message saying if the secret word was correctly guessed
     let hashedSecretWord = findSecretWordValue utxos
@@ -160,7 +163,7 @@ findSecretWordValue =
 -- | Extract the secret word in the Datum of a given transaction output is possible
 secretWordValue :: ChainIndexTxOut -> Maybe HashedString
 secretWordValue o = do
-  Datum d <- either (const Nothing) Just (_ciTxOutDatum o)
+  Datum d <- snd . _ciTxOutScriptDatum $ o
   PlutusTx.fromBuiltinData d
 
 game :: AsContractError e => Contract () GameSchema e ()

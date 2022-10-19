@@ -5,10 +5,10 @@
         "homepage": "",
         "owner": "input-output-hk",
         "repo": "plutus-apps",
-        "rev": "v0.1.0",
+        "rev": "4cc6c84c998af9ef543c2adc36f73be5a2bca4aa",
         "sha256": "1pcxv8l4rgwi0sa3ygq1ag1hyxj61rh03ij5mws78hax09p16vl4",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/plutus-apps/archive/v0.1.0.tar.gz",
+        "url": "https://github.com/input-output-hk/plutus-apps/archive/4cc6c84c998af9ef543c2adc36f73be5a2bca4aa.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
