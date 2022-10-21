@@ -1,8 +1,8 @@
 {-# LANGUAGE DataKinds          #-}
-{-# LANGUAGE TemplateHaskell    #-}
-{-# LANGUAGE TypeApplications   #-}
 {-# LANGUAGE NumericUnderscores #-}
 {-# LANGUAGE OverloadedStrings  #-}
+{-# LANGUAGE TemplateHaskell    #-}
+{-# LANGUAGE TypeApplications   #-}
 
 module Spec.Game
     ( tests
@@ -16,9 +16,9 @@ import           Plutus.Contracts.Game
 import           Plutus.Trace.Emulator (ContractInstanceTag)
 import qualified Plutus.Trace.Emulator as Trace
 import qualified PlutusTx
+import           Prelude
 import           Test.Tasty
 import qualified Test.Tasty.HUnit      as HUnit
-import Prelude
 
 t1, t2 :: ContractInstanceTag
 t1 = Trace.walletInstanceTag w1
@@ -33,7 +33,7 @@ tests :: TestTree
 tests = testGroup "game"
     [ checkPredicate "Expose 'lock' endpoint, and 'guess' endpoint"
         (endpointAvailable @"lock" theContract t1
-          .&&. (endpointAvailable @"guess" theContract t1))
+          .&&. endpointAvailable @"guess" theContract t1)
         $ void $ Trace.activateContractWallet w1 (lock @ContractError)
 
     , checkPredicate "'lock' endpoint submits a transaction"
