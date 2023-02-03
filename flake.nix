@@ -11,9 +11,13 @@
       url = "github:input-output-hk/iohk-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, haskell-nix, CHaP, iohk-nix }:
+  outputs = { self, nixpkgs, flake-utils, haskell-nix, CHaP, iohk-nix, ... }:
 
     flake-utils.lib.eachDefaultSystem (system:
       let
