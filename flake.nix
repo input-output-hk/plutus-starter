@@ -40,6 +40,12 @@
             "https://input-output-hk.github.io/cardano-haskell-packages" = CHaP;
           };
 
+          shell.tools = {
+            cabal.version = "latest";
+            hlint.version = "3.4.1";
+            haskell-language-server.version = "1.8.0.0";
+          };
+
           modules = [
             {
               packages = {
