@@ -47,6 +47,7 @@ library
       base >= 4.9 && < 5,
       aeson -any,
       bytestring -any,
+      cardano-node-emulator -any,
       containers -any,
       freer-extras -any,
       playground-common -any,
@@ -82,22 +83,3 @@ test-suite plutus-example-projects-test
     text -any,
     tasty-hedgehog >=0.2.0.0
 
-
-executable plutus-starter-pab
-  import: lang
-  main-is: Main.hs
-  hs-source-dirs: pab
-  ghc-options:
-    -threaded
-  build-depends:
-    base >= 4.9 && < 5,
-    data-default -any,
-    plutus-contract -any,
-    plutus-pab -any,
-    plutus-starter -any,
-    aeson -any,
-    freer-simple -any,
-    prettyprinter -any,
-    freer-extras -any,
-    plutus-ledger -any,
-    openapi3 -any,

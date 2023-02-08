@@ -28,7 +28,6 @@ import qualified Plutus.PAB.Webserver.Server         as PAB.Server
 import           Plutus.Contracts.Game               as Game
 import           Plutus.Trace.Emulator.Extract       (writeScriptsTo, ScriptsConfig (..), Command (..))
 import           Prettyprinter                       (Pretty (..), viaShow)
-import           Ledger.Index                        (ValidatorMode(..))
 import qualified Wallet.Emulator.Wallet as Wallet
 
 main :: IO ()

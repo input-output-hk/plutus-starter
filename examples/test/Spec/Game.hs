@@ -37,9 +37,10 @@ tests = testGroup "game"
         $ void $ Trace.activateContractWallet w1 (lock @ContractError)
 
     , checkPredicate "'lock' endpoint submits a transaction"
-        (anyTx theContract t1)
+        (anyUnbalancedTx theContract t1)
         $ do
             hdl <- Trace.activateContractWallet w1 theContract
+            void $ Trace.waitNSlots 1
             Trace.callEndpoint @"lock" hdl (LockParams "secret" (Ada.adaValueOf 10))
 
     , checkPredicate "'guess' endpoint is available after locking funds"
