@@ -23,6 +23,7 @@ cabal.project.local~
 .ghc.environment.*
 result*
 .envrc
+.direnv
 .vim
 scripts/wallet
 status.json
