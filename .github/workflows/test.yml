@@ -16,8 +16,8 @@ jobs:
         with:
           nix_conf: |
             allowed-uris = https://github.com/NixOS/nixpkgs https://github.com/input-output-hk https://github.com/NixOS/nixpkgs-channels
-            trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-            substituters = https://hydra.iohk.io https://iohk.cachix.org https://cache.nixos.org/
+            trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo= loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk=
+            substituters = https://iohk.cachix.org https://cache.nixos.org/ https://cache.iog.io https://cache.zw3rk.com
       - run: nix-build release.nix --restrict-eval -I . -A required --no-out-link
 
   guessing-game:
@@ -31,6 +31,6 @@ jobs:
         with:
           nix_conf: |
             allowed-uris = https://github.com/NixOS/nixpkgs https://github.com/input-output-hk https://github.com/NixOS/nixpkgs-channels
-            trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-            substituters = https://hydra.iohk.io https://iohk.cachix.org https://cache.nixos.org/
+            trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo= loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk=
+            substituters = https://iohk.cachix.org https://cache.nixos.org/ https://cache.iog.io https://cache.zw3rk.com
       - run: ./scripts/test

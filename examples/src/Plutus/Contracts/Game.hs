@@ -39,16 +39,18 @@ module Plutus.Contracts.Game
     , correctGuessTrace
     ) where
 
+import           Cardano.Node.Emulator.Params (testnet)
+import           Control.Lens          (_2, (^?))
 import           Control.Monad         (void)
 import qualified Data.ByteString.Char8 as C
 import           Data.Map              (Map)
 import qualified Data.Map              as Map
 import           Data.Maybe            (catMaybes)
-import           Plutus.V1.Ledger.Api  (Address, ScriptContext, Validator, Value, Datum(Datum))
-import qualified Ledger
+import           Plutus.V2.Ledger.Api  (ScriptContext, Validator, Value, Datum(Datum))
+import           Ledger                (CardanoAddress, DecoratedTxOut)
 import qualified Ledger.Ada            as Ada
 import qualified Ledger.Constraints    as Constraints
-import           Ledger.Tx             (ChainIndexTxOut (..))
+import qualified Ledger
 import           Playground.Contract
 import           Plutus.Contract
 import           Plutus.Contract.Trace as X
@@ -57,7 +59,10 @@ import           PlutusTx.Prelude      hiding (pure, (<$>))
 import qualified Prelude               as Haskell
 import           Plutus.Trace.Emulator (EmulatorTrace)
 import qualified Plutus.Trace.Emulator as Trace
-import qualified Plutus.Script.Utils.V1.Typed.Scripts as Scripts
+import qualified Plutus.Script.Utils.V2.Address as Address
+import qualified Plutus.Script.Utils.V2.Typed.Scripts as Scripts
+import qualified Plutus.Script.Utils.V1.Typed.Scripts as V1
+import qualified Ledger.Typed.Scripts as Script
 
 newtype HashedString = HashedString BuiltinByteString deriving newtype (PlutusTx.ToData, PlutusTx.FromData, PlutusTx.UnsafeFromData)
 
@@ -80,7 +85,7 @@ gameInstance :: Scripts.TypedValidator Game
 gameInstance = Scripts.mkTypedValidator @Game
     $$(PlutusTx.compile [|| validateGuess ||])
     $$(PlutusTx.compile [|| wrap ||]) where
-        wrap = Scripts.mkUntypedValidator @HashedString @ClearString
+        wrap = V1.mkUntypedValidator @ScriptContext @HashedString @ClearString
 
 -- create a data script for the guessing game by hashing the string
 -- and lifting the hash to its on-chain representation
@@ -104,13 +109,13 @@ gameValidator :: Validator
 gameValidator = Scripts.validatorScript gameInstance
 
 -- | The address of the game (the hash of its validator script)
-gameAddress :: Address
-gameAddress = Ledger.scriptAddress gameValidator
+gameAddress :: CardanoAddress
+gameAddress = Address.mkValidatorCardanoAddress testnet $ Script.validatorScript gameInstance
 
 -- | Parameters for the "lock" endpoint
 data LockParams = LockParams
-    { secretWord :: Haskell.String
-    , amount     :: Value
+    { secretWord :: !Haskell.String
+    , amount     :: !Value
     }
     deriving stock (Haskell.Eq, Haskell.Show, Generic)
     deriving anyclass (FromJSON, ToJSON, ToSchema, ToArgument)
@@ -126,7 +131,7 @@ newtype GuessParams = GuessParams
 lock :: AsContractError e => Promise () GameSchema e ()
 lock = endpoint @"lock" @LockParams $ \(LockParams secret amt) -> do
     logInfo @Haskell.String $ "Pay " <> Haskell.show amt <> " to the script"
-    let tx         = Constraints.mustPayToTheScript (hashString secret) amt
+    let tx = Constraints.mustPayToTheScriptWithDatumInTx (hashString secret) amt
     void (submitTxConstraints gameInstance tx)
 
 -- | The "guess" contract endpoint. See note [Contract endpoints]
@@ -137,7 +142,7 @@ guess = endpoint @"guess" @GuessParams $ \(GuessParams theGuess) -> do
     utxos <- fundsAtAddressGeq gameAddress (Ada.lovelaceValueOf 1)
 
     let redeemer = clearString theGuess
-        tx       = collectFromScript utxos redeemer
+        tx       = Constraints.collectFromTheScript utxos redeemer
 
     -- Log a message saying if the secret word was correctly guessed
     let hashedSecretWord = findSecretWordValue utxos
@@ -153,14 +158,15 @@ guess = endpoint @"guess" @GuessParams $ \(GuessParams theGuess) -> do
     void (submitTxConstraintsSpending gameInstance utxos tx)
 
 -- | Find the secret word in the Datum of the UTxOs
-findSecretWordValue :: Map TxOutRef ChainIndexTxOut -> Maybe HashedString
+-- | Find the secret word in the Datum of the UTxOs
+findSecretWordValue :: Map TxOutRef DecoratedTxOut -> Maybe HashedString
 findSecretWordValue =
   listToMaybe . catMaybes . Map.elems . Map.map secretWordValue
 
 -- | Extract the secret word in the Datum of a given transaction output is possible
-secretWordValue :: ChainIndexTxOut -> Maybe HashedString
+secretWordValue :: DecoratedTxOut -> Maybe HashedString
 secretWordValue o = do
-  Datum d <- either (const Nothing) Just (_ciTxOutDatum o)
+  Datum d <- o ^? Ledger.decoratedTxOutDatum . _2 . Ledger.datumInDatumFromQuery
   PlutusTx.fromBuiltinData d
 
 game :: AsContractError e => Contract () GameSchema e ()
