@@ -4,6 +4,11 @@
 
 This project gives a simple starter project for using the Plutus Platform.
 
+## DEPRECATION WARNING
+
+**This Plutus starter project is not updated at the moment and rely on an old
+version of Plutus Apps (v0.1.0).**
+
 ## Setting up
 
 ### VSCode devcontainer
