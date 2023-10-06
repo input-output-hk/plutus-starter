@@ -1,8 +1,9 @@
 # Plutus Platform starter project
 ![CI](https://github.com/input-output-hk/plutus-starter/actions/workflows/test.yml/badge.svg?branch=main)
 
-
 This project gives a simple starter project for using the Plutus Platform.
+
+This project is deprecated, use [iogx](https://github.com/input-output-hk/iogx)
 
 ## Setting up
 
