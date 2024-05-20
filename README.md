@@ -1,3 +1,6 @@
+> [!WARNING]  
+> This repository is no longer maintained. To kickstart your Plutus-Tx project, please use [plutus-tx-template](https://github.com/IntersectMBO/plutus-tx-template).
+
 # Plutus Platform starter project
 ![CI](https://github.com/input-output-hk/plutus-starter/actions/workflows/test.yml/badge.svg?branch=main)
 
