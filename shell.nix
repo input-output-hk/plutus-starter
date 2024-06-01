@@ -1,26 +1,10 @@
-{ pure ? false, source-repo-override ? { } }:
-let
-  packages = import ./. { inherit source-repo-override; };
-  inherit (packages) pkgs plutus-starter project;
-
-in
-  project.shellFor {
-    withHoogle = false;
-
-    nativeBuildInputs = with plutus-starter; [
-      hlint
-      cabal-install
-      haskell-language-server
-      stylish-haskell
-      pkgs.niv
-      cardano-repo-tool
-      pkgs.ghcid
-      # HACK: This shouldn't need to be here.
-      pkgs.lzma.dev
-    ] ++ (pkgs.lib.optionals pure [
-      pkgs.git
-      pkgs.cacert
-      pkgs.curl
-      pkgs.jq
-    ]);
-  }
+(import
+  (
+    let lock = builtins.fromJSON (builtins.readFile ./flake.lock); in
+    fetchTarball {
+      url = "https://github.com/edolstra/flake-compat/archive/${lock.nodes.flake-compat.locked.rev}.tar.gz";
+      sha256 = lock.nodes.flake-compat.locked.narHash;
+    }
+  )
+  { src = ./.; }
+).shellNix

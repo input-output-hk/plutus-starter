@@ -47,6 +47,7 @@ library
       base >= 4.9 && < 5,
       aeson -any,
       bytestring -any,
+      cardano-node-emulator -any,
       containers -any,
       freer-extras -any,
       playground-common -any,
